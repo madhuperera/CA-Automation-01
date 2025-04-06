@@ -1,8 +1,8 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
 # Core Variables
-$PolicyID = "CA002"
-$DisplayName = "$PolicyID-AzureManagement:RequireMFA-For:Global-When:AnyNetwork"
+$PolicyID = "CA306"
+$DisplayName = "$PolicyID-AllApps:Block-For:AllGuests-When:UnsupportedDeviceType"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
@@ -20,24 +20,32 @@ foreach ($group in $ExcludedGroups)
     }
 }
 
-# User Persona: Global
-$IncludedUsers = "All"
-
+# User Persona: Guests
+$GuestMembershipKind = "all"
+$IncludedGuestTypes = "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
 
 # Applications
 $ClientAppTypes = "all"
-$IncludedApplications = @("797f4846-ba00-4fd7-ba43-dac1f8f63013") # Azure Management (Microsoft)
-
+$IncludedApplications = "All"
 
 # Locations
 
 
 # Devices
+$IncludedPlatforms = "all"
+$ExcludedPlatforms = 
+@(
+    "android",
+    "iOS",
+    "windows",
+    "macOS",
+    "linux"
+)
 
 
 # Grant Controls
 $Operator = "OR"
-$AuthStrenthId = "00000000-0000-0000-0000-000000000002" # Multifactor authentication (Built-In)
+$BuiltInControls = "block"
             
 
 # Session Contols
@@ -51,26 +59,36 @@ $params =
 	conditions = 
         @{
                 clientAppTypes = $ClientAppTypes
-                applications = 
+                applications =
                 @{
                         includeApplications = $IncludedApplications
                 }
                 users = 
                 @{
-                        includeUsers = $IncludedUsers
                         excludeGroups = $ExcludedGroupIds
+                        includeGuestsOrExternalUsers = 
+                        @{
+                            externalTenants =
+                            @{
+                                membershipKind = $GuestMembershipKind
+                            }
+                            guestOrExternalUserTypes = $IncludedGuestTypes
+                        }
+                }
+                platforms =
+                @{
+                    includePlatforms = $IncludedPlatforms
+                    excludePlatforms = $ExcludedPlatforms
                 }
         }
         grantControls = 
         @{
                 operator = $Operator
-                authenticationStrength = 
-                @{
-                    id = $AuthStrenthId
-                }
+                builtInControls = $BuiltInControls
         }
-}
+    }
 
+# Creating the policy
 $CAPolicyID = Get-MgIdentityConditionalAccessPolicy -Filter "displayName eq '$DisplayName'" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id
 
 if ($CAPolicyID)

@@ -1,4 +1,30 @@
-# Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess,Group.ReadWrite.All','Application.Read.All'
+$RequireScopes = 'Policy.ReadWrite.ConditionalAccess,Group.ReadWrite.All','Application.Read.All'
+# Check for existing Microsoft Graph session
+if (Get-MgContext)
+{
+    $currentContext = Get-MgContext
+    Write-Output "You are currently connected to Microsoft Graph with the following details:"
+    Write-Output "Tenant ID: $($currentContext.TenantId)"
+    Write-Output "Scopes: $($currentContext.Scopes -join ', ')"
+    Write-Output "Environment: $($currentContext.Environment)"
+    
+    $userResponse = Read-Host "Do you want to disconnect and reconnect with the required scopes? (yes/no)"
+    if ($userResponse -eq "yes")
+    {
+        Disconnect-MgGraph
+        Connect-MgGraph -Scopes $RequireScopes
+    }
+    else
+    {
+        Write-Output "Continuing with the current session..."
+    }
+}
+else
+{
+    Write-Output "No active Microsoft Graph session found. Connecting with the required scopes..."
+    Connect-MgGraph -Scopes $RequireScopes
+}
+
 
 $scriptDir = $PSScriptRoot
 

@@ -1,28 +1,16 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess'
 
+# Core Variables
 $PolicyID = "CA001"
 $DisplayName = "$PolicyID-AllApps:Block-For:AllUsers-When:UnknownLocations&Algeria"
 $State = "enabledForReportingButNotEnforced"
-$IncludedLocations = @("CL001-CN-B-M365Apps-AllUsers-UnknownLocations&Algeria")
 $ExcludedGroups = 
 @(
     "EID-SEC-U-A-CAP-$PolicyID-Exclude"
     "EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1"
     "EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2"
 )
-
-$LocationIds = @()
 $ExcludedGroupIds = @()
-
-foreach ($location in $IncludedLocations)
-{
-    $locationId = Get-MgIdentityConditionalAccessNamedLocation -Filter "displayName eq '$location'" | Select-Object -ExpandProperty Id
-    if ($locationId -ne $null)
-    {
-        $LocationIds += $locationId
-    }
-}
-
 foreach ($group in $ExcludedGroups)
 {
     $groupId = Get-MgGroup -Filter "displayName eq '$group'" | Select-Object -ExpandProperty Id
@@ -32,21 +20,54 @@ foreach ($group in $ExcludedGroups)
     }
 }
 
+# User Persona: All Users
+$IncludedUsers = "All"
 
+
+# Applications
+$ClientAppTypes = "all"
+$IncludedApplications = "All"
+
+
+# Locations
+$IncludedLocations = @("CL001-CN-B-M365Apps-AllUsers-UnknownLocations&Algeria")
+$LocationIds = @()
+foreach ($location in $IncludedLocations)
+{
+    $locationId = Get-MgIdentityConditionalAccessNamedLocation -Filter "displayName eq '$location'" | Select-Object -ExpandProperty Id
+    if ($locationId -ne $null)
+    {
+        $LocationIds += $locationId
+    }
+}
+
+
+# Devices
+
+
+# Grant Controls
+$Operator = "OR"
+$BuiltInControls = "block"
+            
+
+# Session Contols
+
+
+# Setting up the policy parameters
 $params = 
 @{
 	displayName = $DisplayName
 	state = $State
 	conditions = 
         @{
-                clientAppTypes = "all"
+                clientAppTypes = $ClientAppTypes
                 applications = 
                 @{
-                        includeApplications = "All"
+                        includeApplications = $IncludedApplications
                 }
                 users = 
                 @{
-                        includeUsers = "All"
+                        includeUsers = $IncludedUsers
                         excludeGroups = $ExcludedGroupIds
                 }
                 locations = 
@@ -56,8 +77,8 @@ $params =
         }
         grantControls = 
         @{
-                operator = "OR"
-                builtInControls = "block"
+            operator = $Operator
+            builtInControls = $BuiltInControls
         }
 }
 

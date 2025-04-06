@@ -1,8 +1,8 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
 # Core Variables
-$PolicyID = "CA002"
-$DisplayName = "$PolicyID-AzureManagement:RequireMFA-For:Global-When:AnyNetwork"
+$PolicyID = "CA304"
+$DisplayName = "$PolicyID-CA304-AllApps:RequireMFA-For:ServiceProviderUsers-When:AnyNetwork"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
@@ -20,14 +20,13 @@ foreach ($group in $ExcludedGroups)
     }
 }
 
-# User Persona: Global
-$IncludedUsers = "All"
-
+# User Persona: CSP Guests
+$GuestMembershipKind = "all"
+$IncludedGuestTypes = "serviceProvider"
 
 # Applications
 $ClientAppTypes = "all"
-$IncludedApplications = @("797f4846-ba00-4fd7-ba43-dac1f8f63013") # Azure Management (Microsoft)
-
+$IncludedApplications = "All"
 
 # Locations
 
@@ -37,8 +36,7 @@ $IncludedApplications = @("797f4846-ba00-4fd7-ba43-dac1f8f63013") # Azure Manage
 
 # Grant Controls
 $Operator = "OR"
-$AuthStrenthId = "00000000-0000-0000-0000-000000000002" # Multifactor authentication (Built-In)
-            
+$AuthStrengthId = "00000000-0000-0000-0000-000000000002"
 
 # Session Contols
 
@@ -51,26 +49,34 @@ $params =
 	conditions = 
         @{
                 clientAppTypes = $ClientAppTypes
-                applications = 
+                applications =
                 @{
                         includeApplications = $IncludedApplications
                 }
                 users = 
                 @{
-                        includeUsers = $IncludedUsers
                         excludeGroups = $ExcludedGroupIds
+                        includeGuestsOrExternalUsers = 
+                        @{
+                            externalTenants =
+                            @{
+                                membershipKind = $GuestMembershipKind
+                            }
+                            guestOrExternalUserTypes = $IncludedGuestTypes
+                        }
                 }
         }
         grantControls = 
         @{
                 operator = $Operator
-                authenticationStrength = 
+                authenticationStrength =
                 @{
-                    id = $AuthStrenthId
+                    id = $AuthStrengthId
                 }
         }
-}
+    }
 
+# Creating the policy
 $CAPolicyID = Get-MgIdentityConditionalAccessPolicy -Filter "displayName eq '$DisplayName'" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id
 
 if ($CAPolicyID)
