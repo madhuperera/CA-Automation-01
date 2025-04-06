@@ -20,8 +20,8 @@ foreach ($Location in $AllLocations)
     Write-Progress -Activity "Processing Known Locations" `
                    -Status "Processing $CurrentCount of $TotalCount" `
                    -PercentComplete (($CurrentCount / $TotalCount) * 100)
+                   
     $locationData = Get-Content -Path $location.FullName -Raw | ConvertFrom-Json
-    Write-Output "Creating location: $($locationData.displayName) ...."
 
     switch ($locationData.type)
     {
