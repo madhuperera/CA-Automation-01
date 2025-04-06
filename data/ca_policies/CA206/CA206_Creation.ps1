@@ -1,7 +1,8 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
-$PolicyID = "CA202"
-$DisplayName = "$PolicyID-SecurityInformation:RequireMFAorCompliant-For:Internals-When:OutsideOfOffice"
+# Core Variables
+$PolicyID = "CA206"
+$DisplayName = "$PolicyID-AllApps:RequireMFA-For:Internals-When:AnyNetwork"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
@@ -9,12 +10,10 @@ $ExcludedGroups =
     "EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1"
     "EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2"
 )
-$IncludedUserActions = "urn:user:registersecurityinfo"
-$ExcludedDeviceFilter = 'device.deviceOwnership -eq "Company" -and device.isCompliant -eq True'
-$ExcludedLocations =
-@(
-    "CL005-IP-A-AllApps-InternalUsers-TrustedLocations"
-)
+
+# User Persona: Internals
+$IncludedUsers = "All"
+$GuestMembershipKind = "all"
 $ExcludedGuestTypes = "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
 $ExcludedRoles = 
 @(
@@ -35,6 +34,25 @@ $ExcludedRoles =
     "e8611ab8-c189-46e8-94e1-60213ab1f814"
     "f2ef992c-3afb-46b9-b7cf-a126ee74c451"
 )
+
+# Applications
+$ClientAppTypes = "all"
+$IncludedApplications = "All"
+
+# Locations
+
+
+# Devices
+
+
+# Grant Controls
+$Operator = "OR"
+$BuiltInControls = "mfa"
+
+# Session Contols
+
+
+# Generating missing IDs
 $ExcludedGroupIds = @()
 
 foreach ($group in $ExcludedGroups)
@@ -46,49 +64,29 @@ foreach ($group in $ExcludedGroups)
     }
 }
 
-$ExcludedLocationIds = @()
-foreach ($location in $ExcludedLocations)
-{
-    $locationId = Get-MgIdentityConditionalAccessNamedLocation -Filter "displayName eq '$($location)'" | Select-Object -ExpandProperty Id
-    if ($locationId -ne $null)
-    {
-        $ExcludedLocationIds += $locationId
-    }
-}
 
+
+# Setting up the policy parameters
 $params = 
 @{
 	displayName = $DisplayName
 	state = $State
 	conditions = 
         @{
-                clientAppTypes = "all"
+                clientAppTypes = $ClientAppTypes
                 applications =
                 @{
-                        includeUserActions = $IncludedUserActions
-                }
-                devices =
-                @{
-                    deviceFilter =
-                    @{
-                        mode = "exclude"
-                        rule = $ExcludedDeviceFilter
-                    }
-                }
-                locations =
-                @{
-                    excludeLocations = $ExcludedLocationIds
-                    includeLocations = "All"
+                        includeApplications = $IncludedApplications
                 }
                 users = 
                 @{
-                        includeUsers = "All"
+                        includeUsers = $IncludedUsers
                         excludeGroups = $ExcludedGroupIds
                         excludeGuestsOrExternalUsers = 
                         @{
                             externalTenants =
                             @{
-                                membershipKind = "all"
+                                membershipKind = $GuestMembershipKind
                             }
                             guestOrExternalUserTypes = $ExcludedGuestTypes
                         }
@@ -97,12 +95,12 @@ $params =
         }
         grantControls = 
         @{
-                operator = "OR"
-                builtInControls = "mfa"
+                operator = $Operator
+                builtInControls = $BuiltInControls
         }
-}
+    }
 
-
+# Creating the policy
 $CAPolicyID = Get-MgIdentityConditionalAccessPolicy -Filter "displayName eq '$DisplayName'" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id
 
 if ($CAPolicyID)
