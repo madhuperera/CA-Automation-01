@@ -1,0 +1,8 @@
+{
+    "type": "CountryBased",
+    "displayName": "CL002-CN-A-AllApps-B2BCollaborationGuests-TrustedCountries",
+    "countriesAndRegions": [
+        "NZ"
+    ],
+    "includeUnknownCountriesAndRegions": false
+}
