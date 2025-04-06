@@ -1,8 +1,0 @@
-{
-    "type": "CountryBased",
-    "displayName": "CL004-CN-A-AllApps-InternalUsers-TrustedCountries",
-    "countriesAndRegions": [
-        "NZ"
-    ],
-    "includeUnknownCountriesAndRegions": false
-}

@@ -1,7 +1,7 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
-$PolicyID = "CA200"
-$DisplayName = "$PolicyID-O365:RequireAppPrtectionPolicy-For:AllUsers-When:OnMobileDevices"
+$PolicyID = "CA201"
+$DisplayName = "$PolicyID-AllApps:Block-For:Internals-When:UnsupportedDeviceType"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
@@ -9,11 +9,14 @@ $ExcludedGroups =
     "EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1"
     "EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2"
 )
-$IncludedApplications = "Office365"
-$IncludedPlatforms = 
+$IncludedApplications = "All"
+$ExcludedPlatforms = 
 @(
     "android",
-    "iOS"
+    "iOS",
+    "windows",
+    "macOS",
+    "linux"
 )
 $ExcludedGuestTypes = "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
 
@@ -42,7 +45,8 @@ $params =
                 }
                 platforms =
                 @{
-                    includePlatforms = $IncludedPlatforms
+                    includePlatforms = "All"
+                    excludePlatforms = $ExcludedPlatforms
                 }
                 users = 
                 @{
@@ -61,7 +65,7 @@ $params =
         grantControls = 
         @{
                 operator = "OR"
-                builtInControls = "compliantApplication"
+                builtInControls = "block"
         }
 }
 

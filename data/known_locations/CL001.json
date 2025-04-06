@@ -1,8 +1,0 @@
-{
-    "type": "CountryBased",
-    "displayName": "CL001-CN-B-M365Apps-AllUsers-UnknownLocations&Algeria",
-    "countriesAndRegions": [
-        "DZ"
-    ],
-    "includeUnknownCountriesAndRegions": true
-}
