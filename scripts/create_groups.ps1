@@ -38,6 +38,7 @@ foreach ($Policy in $AllCAPolicies)
             MailEnabled = $false
             MailNickname = $Policy
             SecurityEnabled = $true
-        } -ErrorAction Stop
+        } -ErrorAction Stop | Out-Null
     }
 }
+
