@@ -1,13 +1,11 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
 # Core Variables
-$PolicyID = "CA304"
-$DisplayName = "$PolicyID-AllApps:RequireMFA-For:ServiceProviderUsers-When:AnyNetwork"
+$PolicyID = "CA151"
+$DisplayName = "$PolicyID-AllApps:AuthStrength-For:EmergencyBreakGlassAccount1-When:AnyNetwork"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
-    "EID-SEC-U-A-CAP-$PolicyID-Exclude"
-    "EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1"
     "EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2"
 )
 $ExcludedGroupIds = @()
@@ -20,9 +18,17 @@ foreach ($group in $ExcludedGroups)
     }
 }
 
-# User Persona: CSP Guests
-$GuestMembershipKind = "all"
-$IncludedGuestTypes = "serviceProvider"
+# User Persona: EmergencyBreakGlassAccount1
+$IncludedGroups = "EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1"
+$IncludedGroupIds = @()
+foreach ($group in $IncludedGroups)
+{
+    $groupId = Get-MgGroup -Filter "displayName eq '$group'" | Select-Object -ExpandProperty Id
+    if ($groupId -ne $null)
+    {
+        $IncludedGroupIds += $groupId
+    }
+}
 
 # Applications
 $ClientAppTypes = "all"
@@ -36,7 +42,7 @@ $IncludedApplications = "All"
 
 # Grant Controls
 $Operator = "OR"
-$AuthStrengthId = "00000000-0000-0000-0000-000000000002"
+$AuthStrengthId = "00000000-0000-0000-0000-000000000004"
 
 # Session Contols
 
@@ -56,14 +62,7 @@ $params =
                 users = 
                 @{
                         excludeGroups = $ExcludedGroupIds
-                        includeGuestsOrExternalUsers = 
-                        @{
-                            externalTenants =
-                            @{
-                                membershipKind = $GuestMembershipKind
-                            }
-                            guestOrExternalUserTypes = $IncludedGuestTypes
-                        }
+                        includeGroups = $IncludedGroupIds
                 }
         }
         grantControls = 
