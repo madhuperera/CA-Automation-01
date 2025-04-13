@@ -20,7 +20,17 @@ $ClientAppTypes = "all"
 $IncludedApplications = "All"
 
 # Locations
-
+$IncludedLocations = "All"
+$ExcludedLocations = @("CL002-CN-A-AllApps-B2BCollaborationGuests-TrustedCountries")
+$ExcludedLocationIds = @()
+foreach ($location in $ExcludedLocations)
+{
+    $locationId = Get-MgIdentityConditionalAccessNamedLocation -Filter "displayName eq '$location'" | Select-Object -ExpandProperty Id
+    if ($locationId -ne $null)
+    {
+        $LocationIds += $locationId
+    }
+}
 
 # Devices
 
@@ -34,7 +44,7 @@ $AuthStrengthId = "00000000-0000-0000-0000-000000000002"
 
 # Generating missing IDs
 $ExcludedGroupIds = @()
-$ExcludedLocationIds = @()
+
 
 foreach ($group in $ExcludedGroups)
 {
@@ -70,6 +80,11 @@ $params =
                             }
                             guestOrExternalUserTypes = $IncludedGuestTypes
                         }
+                }
+                locations = 
+                @{
+                        includeLocations = $IncludedLocations
+                        excludeLocations = $ExcludedLocationIds
                 }
         }
         grantControls = 
