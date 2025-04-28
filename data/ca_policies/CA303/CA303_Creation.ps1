@@ -35,7 +35,7 @@ $ExcludedLocations =
 )
 $IncludedLocations = "All"
 $ExcludedLocationIds = @()
-foreach ($location in $ExludedLocations)
+foreach ($location in $ExcludedLocations)
 {
     $locationId = Get-MgGroup -Filter "displayName eq '$location'" | Select-Object -ExpandProperty Id
     if ($locationId -ne $null)
