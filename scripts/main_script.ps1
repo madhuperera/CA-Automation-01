@@ -1,7 +1,23 @@
-$RequireScopes = 'Policy.ReadWrite.ConditionalAccess','Group.ReadWrite.All','Application.Read.All'
+$RequireScopes = 'Policy.Read.All','Policy.ReadWrite.ConditionalAccess','Group.ReadWrite.All','Application.Read.All'
 Disconnect-MgGraph -ErrorAction SilentlyContinue
 Connect-MgGraph -Scopes $RequireScopes
 
+$CurrentSession = Get-MgContext -ErrorAction SilentlyContinue
+if ($CurrentSession)
+{
+    Write-Host "Connected to Microsoft Graph as $($CurrentSession.Account)" -ForegroundColor Red
+    Write-Output "This script will execute changes in the current tenant. If this is not the intended tenant, press Ctrl + C to exit immediately."
+    for ($i = 60; $i -ge 1; $i--)
+    {
+        Write-Host "Continuing in $i seconds..." -ForegroundColor Red
+        Start-Sleep -Seconds 1
+    }
+}
+else
+{
+    Write-Output "Failed to connect to Microsoft Graph."
+    exit 1
+}
 $scriptDir = $PSScriptRoot
 
 
