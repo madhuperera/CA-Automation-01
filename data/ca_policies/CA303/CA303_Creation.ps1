@@ -29,10 +29,7 @@ $ClientAppTypes = "all"
 $IncludedApplications = "All"
 
 # Locations
-$ExcludedLocations = 
-@(
-    "CL003-CN-A-AllApps-ServiceProviderUsers-TrustedCountries"
-)
+$ExcludedLocations = @("CL003-CN-A-AllApps-ServiceProviderUsers-TrustedCountries")
 $IncludedLocations = "All"
 $ExcludedLocationIds = @()
 foreach ($location in $ExcludedLocations)

@@ -29,15 +29,13 @@ $ClientAppTypes = "all"
 $IncludedApplications = "All"
 
 # Locations
-$ExludedLocations = 
-@(
-    "CL002-CN-A-AllApps-B2BCollaborationGuests-TrustedCountries"
-)
+$ExcludedLocations = @("CL002-CN-A-AllApps-B2BCollaborationGuests-TrustedCountries")
+
 $IncludedLocations = "All"
 $ExcludedLocationIds = @()
-foreach ($location in $ExludedLocations)
+foreach ($location in $ExcludedLocations)
 {
-    $locationId = Get-MgGroup -Filter "displayName eq '$location'" | Select-Object -ExpandProperty Id
+    $locationId = Get-MgIdentityConditionalAccessNamedLocation -Filter "displayName eq '$location'" | Select-Object -ExpandProperty Id
     if ($locationId -ne $null)
     {
         $ExcludedLocationIds += $locationId
