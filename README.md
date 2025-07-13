@@ -1,4 +1,6 @@
-<!-- WARNING: The content below is AI generated. Please review and validate before using in production. -->
+<div style="background-color:#b71c1c; color:#fff; padding:12px; border-radius:6px; font-weight:bold;">
+⚠️ <strong>WARNING:</strong> The content below is AI generated. Please review and validate before using in production.
+</div>
 
 # CA-Automation-01
 
@@ -6,7 +8,7 @@ Conditional Access Policy Automation
 
 ## Overview
 
-This repository provides PowerShell scripts and supporting files to automate the creation and management of Azure AD Conditional Access (CA) policies, known locations, and related groups. It is designed for IT administrators who want to standardize and streamline the deployment of CA policies across their Microsoft 365 tenant.
+This repository provides PowerShell scripts and supporting files to automate the creation and management of Entra ID Conditional Access (CA) policies, known locations, and related groups. It is designed for IT administrators who want to standardize and streamline the deployment of CA policies across their Microsoft 365 tenant.
 
 ---
 
@@ -94,6 +96,7 @@ CA-Automation-01/
    ```powershell
    .\main_script.ps1
    ```
+
    - The script will prompt you to confirm your Microsoft Graph session and tenant.
    - It will sequentially execute scripts to create known locations, break glass groups, exclusion groups, and CA policies.
 
@@ -127,37 +130,37 @@ You will be prompted to sign in and consent to these permissions when the script
 
 Each CA policy is defined in its own folder under `data/ca_policies/` and has a corresponding PowerShell script (e.g., `CA001_Creation.ps1`). Below is a summary of the included policies:
 
-| Policy  | Description                                                                                 |
-|---------|--------------------------------------------------------------------------------------------|
-| CA001   | Block access to all apps for all users when from unknown locations (e.g., Algeria).         |
-| CA002   | Require MFA for Azure Management for all users.                                             |
-| CA003   | Block access to Microsoft Admin Portals for all users except specified exclusions.           |
-| CA004   | Block device code authentication transfer for all apps.                                     |
-| CA005   | Block legacy protocols for all users.                                                       |
-| CA006   | Block access to all apps for all users when outside trusted locations.                      |
-| CA102   | Require MFA for admin roles.                                                                |
-| CA103   | Require phishing-resistant MFA for admin roles.                                             |
-| CA104   | Set session frequency for admin roles.                                                      |
-| CA151   | Set authentication strength for Emergency Break Glass Account 1.                            |
-| CA152   | Set authentication strength for Emergency Break Glass Account 2.                            |
-| CA200   | Require compliant application for all users on all platforms.                               |
-| CA201   | Block access to all apps for all users on all platforms except specified exclusions.         |
-| CA202   | Require MFA for all users on all platforms except specified exclusions.                      |
-| CA203   | Set session frequency for internal users on unmanaged devices.                              |
-| CA204   | Require managed device for internal users.                                                  |
-| CA205   | Block legacy protocols for internal users.                                                  |
-| CA206   | Require MFA for internal users.                                                             |
-| CA207   | Require passwordless authentication for internal users.                                     |
-| CA208   | Block access for internal users on excluded platforms.                                      |
-| CA300   | Block access for unallowed guest types.                                                     |
-| CA301   | Block access for service provider users outside trusted countries.                          |
-| CA302   | Require authentication strength for service provider users.                                 |
-| CA303   | Block access for service provider users outside trusted countries.                          |
-| CA304   | Require MFA for service provider users.                                                     |
-| CA305   | Require compliant device for service provider users.                                        |
-| CA306   | Block access for all guests on unsupported device types.                                    |
-| CA307   | Block legacy protocols for all guests.                                                      |
-| ...     | Additional policies can be added as needed.                                                 |
+| Policy | Description                                                                          |
+| ------ | ------------------------------------------------------------------------------------ |
+| CA001  | Block access to all apps for all users when from unknown locations (e.g., Algeria).  |
+| CA002  | Require MFA for Azure Management for all users.                                      |
+| CA003  | Block access to Microsoft Admin Portals for all users except specified exclusions.   |
+| CA004  | Block device code authentication transfer for all apps.                              |
+| CA005  | Block legacy protocols for all users.                                                |
+| CA006  | Block access to all apps for all users when outside trusted locations.               |
+| CA102  | Require MFA for admin roles.                                                         |
+| CA103  | Require phishing-resistant MFA for admin roles.                                      |
+| CA104  | Set session frequency for admin roles.                                               |
+| CA151  | Set authentication strength for Emergency Break Glass Account 1.                     |
+| CA152  | Set authentication strength for Emergency Break Glass Account 2.                     |
+| CA200  | Require compliant application for all users on all platforms.                        |
+| CA201  | Block access to all apps for all users on all platforms except specified exclusions. |
+| CA202  | Require MFA for all users on all platforms except specified exclusions.              |
+| CA203  | Set session frequency for internal users on unmanaged devices.                       |
+| CA204  | Require managed device for internal users.                                           |
+| CA205  | Block legacy protocols for internal users.                                           |
+| CA206  | Require MFA for internal users.                                                      |
+| CA207  | Require passwordless authentication for internal users.                              |
+| CA208  | Block access for internal users on excluded platforms.                               |
+| CA300  | Block access for unallowed guest types.                                              |
+| CA301  | Block access for service provider users outside trusted countries.                   |
+| CA302  | Require authentication strength for service provider users.                          |
+| CA303  | Block access for service provider users outside trusted countries.                   |
+| CA304  | Require MFA for service provider users.                                              |
+| CA305  | Require compliant device for service provider users.                                 |
+| CA306  | Block access for all guests on unsupported device types.                             |
+| CA307  | Block legacy protocols for all guests.                                               |
+| ...    | Additional policies can be added as needed.                                          |
 
 Each policy script contains logic to create or update the policy in Azure AD using Microsoft Graph, with customizable exclusions, locations, device filters, and grant controls.
 
