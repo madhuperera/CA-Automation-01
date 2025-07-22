@@ -19,7 +19,7 @@ $CurrentCount = 0
 foreach ($Policy in $AllCAPolicies)
 {
     $CurrentCount++
-    Write-Progress -Activity "Processing Known Locations" `
+    Write-Progress -Activity "Processing Exclusion Groups" `
                    -Status "Processing $CurrentCount of $TotalCount" `
                    -PercentComplete (($CurrentCount / $TotalCount) * 100)
 
