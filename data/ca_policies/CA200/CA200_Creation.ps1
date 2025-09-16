@@ -1,7 +1,7 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
 $PolicyID = "CA200"
-$DisplayName = "$PolicyID-O365:RequireAppPrtectionPolicy-For:AllUsers-When:OnMobileDevices"
+$DisplayName = "$PolicyID-O365:RequireAppProtectionPolicy-For:AllUsers-When:OnMobileDevices"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
