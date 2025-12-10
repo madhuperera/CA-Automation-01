@@ -77,16 +77,14 @@ Named locations define geographic and network-based access conditions used by Co
 3. Update `create_known_locations.ps1` to discover and create
 4. Reference in CA policy scripts as needed
 
-
 ---
 
 ## Location Types
+
 ### Country-Based
 
 - Used for geographic access control
 - Format: Country codes (ISO 3166-1 alpha-2)
-- Example: "NZ", "AU", "US"
-O 3166-1 alpha-2)
 - Example: "NZ", "AU", "US"
 
 ### IP-Based
