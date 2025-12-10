@@ -64,10 +64,10 @@ Named locations define geographic and network-based access conditions used by Co
 | Attribute | Value |
 |-----------|-------|
 | **Type** | IP-based |
-| **Trusted IPs** | <span style="color:red;font-weight:bold">1.1.1.1/32</span> |
+| **Trusted IPs** | **`1.1.1.1/32`** |
 | **Is Trusted** | Yes |
 
-<span style="color:red;font-weight:bold">IMPORTANT: Replace <b>CL005</b> and <b>1.1.1.1/32</b> with your own internal trusted IP ranges!</span>
+**:warning: IMPORTANT:** Replace **`CL005`** and **`1.1.1.1/32`** with your own internal trusted IP ranges!
 
 **Purpose**: Corporate network IP ranges and VPN exit points. Marks trusted internal network locations.
 
