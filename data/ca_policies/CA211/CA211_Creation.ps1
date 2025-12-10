@@ -1,5 +1,25 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
+# Check for Entra ID P2 license
+$skus = Get-MgSubscribedSku
+$p2Skus = 
+@(
+    "AAD_PREMIUM_P2",
+    "EMS_PREMIUM_P2",
+    "ENTERPRISEPREMIUM",
+    "M365EDU_A5_FACULTY",
+    "M365EDU_A5_STUDENT"
+)
+$hasP2 = $skus | Where-Object { $p2Skus -contains $_.SkuPartNumber -and $_.PrepaidUnits.Enabled -gt 0 }
+
+if (-not $hasP2) 
+{
+    Write-Warning "Tenant does NOT have Entra ID P2 license. Risk-based conditional access policies are not supported."
+    exit
+}
+
+Write-Output "Tenant has Entra ID P2 capabilities. Proceeding with policy creation."
+
 # Core Variables
 $PolicyID = "CA211"
 $DisplayName = "$PolicyID-AllApps:Compliant-For:Internals-When:RiskySignIn:Medium"
