@@ -12,8 +12,6 @@ This repository provides **Infrastructure-as-Code automation** for Entra ID Cond
 
 **Key Principle**: Policies are defined as `.ps1` files in the `data/` folders, discovered automatically, and orchestrated through a single entry point (`main_script.ps1`). This enables version control, code review, and repeatability for identity security infrastructure.
 
----
-
 ## Table of Contents
 
 - [Overview](#overview)
@@ -27,14 +25,13 @@ This repository provides **Infrastructure-as-Code automation** for Entra ID Cond
 - [Development Workflows](#development-workflows)
 - [Troubleshooting](#troubleshooting)
 
----
-
 ## Architecture
 
 ### Execution Flow
+
 `main_script.ps1` orchestrates a **strict sequencing** of dependent operations:
 
-```
+```text
 Connect to Microsoft Graph
   ↓
 Create Named Locations (from data/known_locations/*.psd1)
@@ -47,12 +44,15 @@ Create/Update CA Policies (from data/ca_policies/{CA###}/*.ps1)
 ```
 
 **Why this order matters:**
+
 - Locations must exist before policies reference them
 - Groups must exist before policies can exclude them
 - Break-glass accounts are created first and always excluded to prevent lockout
 
 ### Discovery-and-Apply Pattern
+
 Each script:
+
 1. **Scans** its data folder (e.g., `data/ca_policies/`)
 2. **Discovers** all definitions (`.ps1` files)
 3. **Applies** to Entra ID via Microsoft Graph API
@@ -60,19 +60,19 @@ Each script:
 This enables adding new policies simply by creating new `.ps1` files—no script modifications needed.
 
 ### Policy Definition Model
+
 Each policy (`data/ca_policies/{CA###}/CA###_Creation.ps1`):
+
 - Defines policy parameters (name, state, conditions, grant controls)
 - **Dynamically resolves** group/location IDs via Graph API queries (no hardcoding)
 - Creates or updates the policy atomically
 - Includes automatic exclusions for break-glass and policy-specific exclusion groups
 
----
-
 ## File Structure
 
 ```plaintext
 CA-Automation-01/
-│
+
 ├── README.md
 ├── data/
 │   ├── adminstrative_units/
@@ -124,25 +124,23 @@ CA-Automation-01/
     └── CAPolicy_Skeleton.ps1
 ```
 
----
-
 ## How to Run
 
 1. **Clone the repository** to your local machine.
 2. **Open PowerShell as Administrator** (recommended for permissions).
 3. **Navigate to the `scripts` directory**:
+
    ```powershell
    cd .\CA-Automation-01\scripts
    ```
+
 4. **Run the main script**:
+
    ```powershell
    .\main_script.ps1
    ```
 
-   - The script will prompt you to confirm your Microsoft Graph session and tenant.
-   - It will sequentially execute scripts to create known locations, break glass groups, exclusion groups, and CA policies.
-
----
+   The script will prompt you to confirm your Microsoft Graph session and tenant. It will sequentially execute scripts to create known locations, break glass groups, exclusion groups, and CA policies.
 
 ## Permissions Required
 
@@ -155,44 +153,42 @@ To run these scripts, you must have the following Microsoft Graph API permission
 
 You will be prompted to sign in and consent to these permissions when the script connects to Microsoft Graph.
 
----
-
 ## Scripts
 
 ### Entry Point
-- **main_script.ps1**: 
+
+- **main_script.ps1**:
   - Connects to Microsoft Graph with required scopes
   - Shows current tenant and waits 60 seconds for confirmation (prevents accidental wrong-tenant deployments)
   - Executes subscripts in dependency order
   - All subsequent connections inherit the authenticated session
 
 ### Policy & Group Scripts
-- **create_known_locations.ps1**: 
+
+- **create_known_locations.ps1**:
   - Scans `data/known_locations/` for `.psd1` files
   - Creates or updates named locations (geographic/IP-based CA conditions)
   - Each `.psd1` is a PowerShell hash table with Graph API properties
 
-- **create_break_glass_groups.ps1**: 
+- **create_break_glass_groups.ps1**:
   - Creates two hardcoded emergency admin groups:
     - `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1`
     - `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2`
   - Always excluded from all CA policies to prevent lockout
   - Idempotent (safe to re-run)
 
-- **create_groups.ps1**: 
+- **create_groups.ps1**:
   - Auto-discovers CA policy folders
   - Creates one exclusion group per policy: `EID-SEC-U-A-CAP-{CA###}-Exclude`
   - Enables per-policy exception management without modifying policy files
 
-- **create_ca_policies.ps1**: 
+- **create_ca_policies.ps1**:
   - Scans `data/ca_policies/` for `.ps1` files
   - Executes each policy file with `-ErrorAction Stop` (atomic deployment)
   - Displays progress bar showing completion percentage
 
-- **create_admin_units.ps1**: 
+- **create_admin_units.ps1**:
   - Reserved for administrative unit management if required
-
----
 
 ## CA Policies
 
@@ -236,18 +232,20 @@ else { New-MgIdentityConditionalAccessPolicy -BodyParameter $params }
 | **CA102–CA104** | Admin-specific hardening (MFA, phishing-resistant auth, session frequency) | Privileged Access |
 | **CA151–CA152** | Break-glass account protections (emergency admin authentication) | Emergency Access |
 | **CA200–CA208** | Mobile & unmanaged device controls (app protection, managed device requirement) | Device Management |
-| **CA300–CA307** | Guest and B2B access restrictions (country blocks, device requirements, legacy protocols) | External Access |
+| CA300–CA307 | Guest and B2B access restrictions (country blocks, device requirements, legacy protocols) | External Access |
 
 ### Naming Convention for Policies
+
 Display names follow this pattern for clarity:
-```
+
+```text
 {CA###}-{Control/Threat}-For:{UserGroups}-When:{Conditions}
 ```
+
 Examples:
+
 - `CA001-AllApps:Block-For:AllUsers-When:UnknownLocations&Algeria`
 - `CA102-MFA:Require-For:AdminRoles-When:AzureManagement`
-
----
 
 ## Known Locations
 
@@ -285,11 +283,10 @@ Examples:
 - `CL002-IP-Trusted-NZ-HQ` (IP-range-based)
 
 ### Discovery
+
 - `create_known_locations.ps1` automatically discovers all `.psd1` files
 - Creates or updates locations in Entra ID
 - Idempotent (safe to re-run)
-
----
 
 ## Development Workflows
 
@@ -354,23 +351,24 @@ Examples:
 ### Modifying Existing Policies
 
 **Safe modifications:**
+
 - Change `$State` from `enabledForReportingButNotEnforced` to `enabled` (after validation)
 - Add groups to `$ExcludedGroups` array
 - Adjust conditions (locations, users, applications)
 - Update `ReadMe.md` documentation
 
 **Unsafe modifications:**
+
 - Do NOT delete policy `.ps1` files (breaks tracking and rollback)
 - Do NOT remove break-glass group exclusions
 - Do NOT refactor query logic without testing in another tenant first
 
 **Testing strategy:**
+
 - Make changes in a non-production tenant first
 - Leave in reporting mode for 24-48 hours minimum
 - Review audit logs in target tenant before enforcement
 - Always keep break-glass groups excluded to prevent lockout scenarios
-
----
 
 ## Troubleshooting
 
@@ -392,8 +390,6 @@ Examples:
 4. **Break-Glass Priority**: Emergency admin accounts are always excluded from CA policies to prevent lockout
 5. **Dynamic ID Resolution**: Group and location IDs are resolved at runtime via Graph API queries—never hardcoded
 6. **Strict Sequencing**: Operations have hard dependencies (e.g., locations before policies) enforced by execution order
-
----
 
 ## References
 
