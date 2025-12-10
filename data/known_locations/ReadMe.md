@@ -60,11 +60,14 @@ Named locations define geographic and network-based access conditions used by Co
 
 ## CL005 - Internal Users Trusted IP Ranges
 
+
 | Attribute | Value |
 |-----------|-------|
 | **Type** | IP-based |
-| **Trusted IPs** | 1.1.1.1/32 |
+| **Trusted IPs** | <span style="color:red;font-weight:bold">1.1.1.1/32</span> |
 | **Is Trusted** | Yes |
+
+<span style="color:red;font-weight:bold">IMPORTANT: Replace <b>CL005</b> and <b>1.1.1.1/32</b> with your own internal trusted IP ranges!</span>
 
 **Purpose**: Corporate network IP ranges and VPN exit points. Marks trusted internal network locations.
 
