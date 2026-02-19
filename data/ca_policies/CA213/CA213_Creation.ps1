@@ -20,10 +20,9 @@ if (-not $hasP2)
 
 Write-Output "Tenant has Entra ID P2 capabilities. Proceeding with policy creation."
 
-
 # Core Variables
-$PolicyID = "CA212"
-$DisplayName = "$PolicyID-AllApps:Block-For:Internals-When:RiskySignIn:High"
+$PolicyID = "CA213"
+$DisplayName = "$PolicyID-AllApps:RequireMFA-For:Internals-When:RiskyUser:Low"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
@@ -60,8 +59,8 @@ $ExcludedRoles =
 $ClientAppTypes = "all"
 $IncludedApplications = "All"
 
-# Risky Sign-In Conditions
-$SignInRiskLevels = @("high")
+# Risky User Conditions
+$UserRiskLevels = @("low")
 
 # Locations
 
@@ -71,7 +70,7 @@ $SignInRiskLevels = @("high")
 
 # Grant Controls
 $Operator = "OR"
-$BuiltInControls = "block"
+$BuiltInControls = "mfa"
 
 # Session Contols
 
@@ -116,7 +115,7 @@ $params =
                         }
                         excludeRoles = $ExcludedRoles
                 }
-                signInRiskLevels = $SignInRiskLevels   
+                userRiskLevels = $UserRiskLevels   
         }
         grantControls = 
         @{

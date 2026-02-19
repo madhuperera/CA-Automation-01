@@ -1,28 +1,28 @@
-# CA212 - Risky Sign-In (High) Block Access
+# CA215 - Risky User (High) Require MFA + Password Reset + Every Sign-In
 
 ## Policy Overview
 
 | Attribute | Value |
 |-----------|-------|
-| **Policy ID** | CA212 |
+| **Policy ID** | CA215 |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Risk-Based Access |
-| **Risk Signal** | Sign-in risk (`high`) |
+| **Risk Signal** | User risk (`high`) |
 | **Applies To** | Internal users, all cloud apps |
-| **Grant Controls** | Block access |
-| **Session Controls** | None |
+| **Grant Controls** | Require MFA + Password reset |
+| **Session Controls** | Sign-in frequency: every time |
 
 ---
 
 ## Business Objective
 
-Deny access attempts assessed as high sign-in risk to prevent high-likelihood account compromise.
+Apply strongest remediation for high-risk users before access is allowed.
 
 ---
 
 ## Security Rationale
 
-High-risk sign-ins are treated as potentially malicious and are blocked outright instead of allowing remediation in-session.
+High user risk suggests probable compromise. Requiring both MFA and password change with per-sign-in validation forces account recovery and reduces persistence risk.
 
 ---
 
@@ -42,15 +42,17 @@ The script validates Entra ID P2 capability by:
 - Exclude groups: policy exclusion group + two emergency break-glass groups
 - Exclude guest/external user types
 - Exclude privileged admin roles
-- Condition: `signInRiskLevels = high`
-- Grant: `block`
+- Condition: `userRiskLevels = high`
+- Grant: `mfa` AND `passwordChange`
+- Session: `signInFrequency = everyTime`
 
 ---
 
 ## Testing Checklist
 
-- [ ] Policy correctly identifies high-risk sign-ins for internal users
-- [ ] Block control is applied
+- [ ] Policy correctly identifies high-risk users for internal population
+- [ ] MFA and password-change controls are both required
+- [ ] Sign-in frequency is enforced every time
 - [ ] No impact on break-glass accounts
 
 ---
@@ -59,5 +61,4 @@ The script validates Entra ID P2 capability by:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0 | 2025-12-10 | Initial documentation |
-| 1.1 | 2026-02-20 | Updated to risk-based sign-in documentation and service-plan P2 validation logic |
+| 1.0 | 2026-02-20 | Initial documentation |

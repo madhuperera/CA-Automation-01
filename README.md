@@ -97,6 +97,13 @@ CA-Automation-01/
 │   │   ├── CA206/
 │   │   ├── CA207/
 │   │   ├── CA208/
+│   │   ├── CA209/
+│   │   ├── CA210/
+│   │   ├── CA211/
+│   │   ├── CA212/
+│   │   ├── CA213/
+│   │   ├── CA214/
+│   │   ├── CA215/
 │   │   ├── CA300/
 │   │   ├── CA301/
 │   │   ├── CA302/
@@ -195,7 +202,7 @@ You will be prompted to sign in and consent to these permissions when the script
 ### Policy Structure
 Each policy lives in its own folder: `data/ca_policies/{CA###}/`
 - **CA###_Creation.ps1**: Policy definition (create/update logic)
-- **ReadMe.md**: Business rationale and exclusion documentation (currently empty—recommended to fill)
+- **ReadMe.md**: Business rationale, controls summary, exclusions, and testing checklist
 
 ### Policy Definition Pattern
 Every policy script follows this structure:
@@ -231,8 +238,18 @@ else { New-MgIdentityConditionalAccessPolicy -BodyParameter $params }
 | **CA001–CA006** | Core threat controls (unknown locations, device restrictions, legacy protocol blocking) | Foundational |
 | **CA102–CA104** | Admin-specific hardening (MFA, phishing-resistant auth, session frequency) | Privileged Access |
 | **CA151–CA152** | Break-glass account protections (emergency admin authentication) | Emergency Access |
-| **CA200–CA208** | Mobile & unmanaged device controls (app protection, managed device requirement) | Device Management |
+| **CA200–CA209** | Mobile & unmanaged device controls (app protection, managed device requirement) | Device Management |
+| **CA210–CA212** | Risky sign-in controls for internals (low: MFA, medium: MFA + every sign-in, high: block) | Risk-Based Access |
+| **CA213–CA215** | Risky user controls for internals (low: MFA, medium: MFA + every sign-in, high: MFA + password reset + every sign-in) | Risk-Based Access |
 | CA300–CA307 | Guest and B2B access restrictions (country blocks, device requirements, legacy protocols) | External Access |
+
+### Risk-Based License Prerequisite
+
+Risk-based CA policies (e.g., CA210–CA215) validate Entra ID P2 support by:
+
+1. Getting subscribed SKUs via `Get-MgSubscribedSku`
+2. Filtering to SKUs with `CapabilityStatus = Enabled` and `PrepaidUnits.Enabled > 0`
+3. Checking SKU `ServicePlans` for `ServicePlanName = AAD_PREMIUM_P2`
 
 ### Naming Convention for Policies
 

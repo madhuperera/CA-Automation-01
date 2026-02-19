@@ -1,28 +1,28 @@
-# CA212 - Risky Sign-In (High) Block Access
+# CA214 - Risky User (Medium) Require MFA + Every Sign-In
 
 ## Policy Overview
 
 | Attribute | Value |
 |-----------|-------|
-| **Policy ID** | CA212 |
+| **Policy ID** | CA214 |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Risk-Based Access |
-| **Risk Signal** | Sign-in risk (`high`) |
+| **Risk Signal** | User risk (`medium`) |
 | **Applies To** | Internal users, all cloud apps |
-| **Grant Controls** | Block access |
-| **Session Controls** | None |
+| **Grant Controls** | Require MFA |
+| **Session Controls** | Sign-in frequency: every time |
 
 ---
 
 ## Business Objective
 
-Deny access attempts assessed as high sign-in risk to prevent high-likelihood account compromise.
+Enforce stronger controls for medium-risk users using MFA and per-sign-in reauthentication.
 
 ---
 
 ## Security Rationale
 
-High-risk sign-ins are treated as potentially malicious and are blocked outright instead of allowing remediation in-session.
+Medium user risk indicates elevated compromise probability. Every-time sign-in frequency reduces the chance of long-lived token abuse.
 
 ---
 
@@ -42,15 +42,17 @@ The script validates Entra ID P2 capability by:
 - Exclude groups: policy exclusion group + two emergency break-glass groups
 - Exclude guest/external user types
 - Exclude privileged admin roles
-- Condition: `signInRiskLevels = high`
-- Grant: `block`
+- Condition: `userRiskLevels = medium`
+- Grant: `mfa`
+- Session: `signInFrequency = everyTime`
 
 ---
 
 ## Testing Checklist
 
-- [ ] Policy correctly identifies high-risk sign-ins for internal users
-- [ ] Block control is applied
+- [ ] Policy correctly identifies medium-risk users for internal population
+- [ ] MFA challenge is applied
+- [ ] Sign-in frequency is enforced every time
 - [ ] No impact on break-glass accounts
 
 ---
@@ -59,5 +61,4 @@ The script validates Entra ID P2 capability by:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0 | 2025-12-10 | Initial documentation |
-| 1.1 | 2026-02-20 | Updated to risk-based sign-in documentation and service-plan P2 validation logic |
+| 1.0 | 2026-02-20 | Initial documentation |
