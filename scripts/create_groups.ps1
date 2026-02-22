@@ -1,6 +1,7 @@
 # Connect-MgGraph -Scopes 'Group.ReadWrite.All'
 
 $GroupNamePrefix = "EID-SEC-U-A-CAP-"
+$ThrottleDelayMilliseconds = 100
 
 $scriptDir = $PSScriptRoot
 $CAPolicyFolder = Join-Path -Path $scriptDir -ChildPath "..\data\ca_policies"
@@ -40,5 +41,7 @@ foreach ($Policy in $AllCAPolicies)
             SecurityEnabled = $true
         } -ErrorAction Stop | Out-Null
     }
+
+    Start-Sleep -Milliseconds $ThrottleDelayMilliseconds
 }
 

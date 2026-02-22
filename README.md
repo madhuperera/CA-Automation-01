@@ -104,6 +104,7 @@ CA-Automation-01/
 │   │   ├── CA213/
 │   │   ├── CA214/
 │   │   ├── CA215/
+│   │   ├── CA216/
 │   │   ├── CA300/
 │   │   ├── CA301/
 │   │   ├── CA302/
@@ -238,7 +239,7 @@ else { New-MgIdentityConditionalAccessPolicy -BodyParameter $params }
 | **CA001–CA006** | Core threat controls (unknown locations, device restrictions, legacy protocol blocking) | Foundational |
 | **CA102–CA104** | Admin-specific hardening (MFA, phishing-resistant auth, session frequency) | Privileged Access |
 | **CA151–CA152** | Break-glass account protections (emergency admin authentication) | Emergency Access |
-| **CA200–CA209** | Mobile & unmanaged device controls (app protection, managed device requirement) | Device Management |
+| **CA200–CA209, CA216** | Mobile & unmanaged device controls (app protection, managed/compliant device requirement) | Device Management |
 | **CA210–CA212** | Risky sign-in controls for internals (low: MFA, medium: MFA + every sign-in, high: block) | Risk-Based Access |
 | **CA213–CA215** | Risky user controls for internals (low: MFA, medium: MFA + every sign-in, high: MFA + password reset + every sign-in) | Risk-Based Access |
 | CA300–CA307 | Guest and B2B access restrictions (country blocks, device requirements, legacy protocols) | External Access |

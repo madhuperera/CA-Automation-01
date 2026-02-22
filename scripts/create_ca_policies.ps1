@@ -1,5 +1,7 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
+$ThrottleDelayMilliseconds = 100
+
 $scriptDir = $PSScriptRoot
 $CAPolicyFolder = Join-Path -Path $scriptDir -ChildPath "..\data\ca_policies"
 
@@ -15,4 +17,5 @@ foreach ($Policy in $AllCAPolicies)
                    -PercentComplete (($CurrentCount / $TotalCount) * 100)
 
     & $Policy -ErrorAction Stop
+    Start-Sleep -Milliseconds $ThrottleDelayMilliseconds
 }
