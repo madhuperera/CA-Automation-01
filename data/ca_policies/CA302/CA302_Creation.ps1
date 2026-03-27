@@ -37,7 +37,7 @@ foreach ($location in $ExcludedLocations)
 
 # Grant Controls
 $Operator = "OR"
-$AuthStrengthId = "00000000-0000-0000-0000-000000000002"
+$BuiltInControls = "mfa"
 
 # Session Contols
 
@@ -90,10 +90,7 @@ $params =
         grantControls = 
         @{
                 operator = $Operator
-                authenticationStrength =
-                @{
-                    id = $AuthStrengthId
-                }
+                builtInControls = $BuiltInControls
         }
     }
 

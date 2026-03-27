@@ -12,9 +12,56 @@ This repository provides **Infrastructure-as-Code automation** for Entra ID Cond
 
 **Key Principle**: Policies are defined as `.ps1` files in the `data/` folders, discovered automatically, and orchestrated through a single entry point (`main_script.ps1`). This enables version control, code review, and repeatability for identity security infrastructure.
 
+### Policy Numbering by Persona
+
+Each CA policy number range maps to a specific user persona:
+
+| Range | Persona | Description |
+|-------|---------|-------------|
+| **CA000–CA099** | Global | Foundational controls applied to all users |
+| **CA100–CA199** | Admins | Privileged access hardening for admin roles and break-glass accounts |
+| **CA200–CA299** | Internals | Controls for internal employees (devices, risk, apps) |
+| **CA300–CA399** | Guests & External | Restrictions for B2B guests, service providers, and external users |
+| **CA800–CA899** | Custom | Targeted policies for specific groups or scenarios (e.g. IP restrictions for a subset of users) |
+
+> **Recommendation — Piloting new controls for an existing persona**: Start from the **ceiling** of that persona's range and work **backwards**. For example, if you want to pilot a new control for Internal Users, start at CA299 and decrement (CA299, CA298, ...). This keeps pilot/experimental policies separated from the established baseline at the lower end of the range.
+
+> **Recommendation — Custom per-group policies**: Use the **CA800** range for policies that target a specific group of users with a unique condition — for example, restricting a particular team's access to a set of IPs. This avoids polluting the persona ranges with one-off rules.
+
+### Deployment Tiers
+
+Policies are classified into two deployment tiers. **Core** policies form the security baseline that every tenant must deploy. **Advanced** policies layer on additional controls for organisations with stricter requirements or Entra ID P2 licensing.
+
+#### Core Policies (Baseline)
+
+These policies must be deployed in every tenant.
+
+| Persona | Policies |
+|---------|----------|
+| **Global** | CA001, CA002, CA004, CA005 |
+| **Admins** | CA102, CA104, CA105, CA151, CA152 |
+| **Internals** | CA200, CA201, CA205, CA206, CA209, CA218 |
+| **Guests & External** | CA300, CA301, CA302, CA303, CA304, CA306, CA307 |
+
+#### Advanced Policies
+
+These policies add defence-in-depth and are recommended for mature environments.
+
+| Persona | Policies | Notes |
+|---------|----------|-------|
+| **Global** | CA003 | Admin portal blocking |
+| **Admins** | CA103 | Phishing-resistant MFA |
+| **Internals** | CA202, CA203, CA204, CA207, CA208 | Device management & session controls |
+| **Internals** | CA210, CA211, CA212 | Sign-in risk (requires Entra ID P2) |
+| **Internals** | CA213, CA214, CA215 | User risk (requires Entra ID P2) |
+| **Internals** | CA216, CA217 | Platform-specific device controls |
+| **Guests & External** | CA305 | Compliant device for service provider admin access |
+
 ## Table of Contents
 
 - [Overview](#overview)
+  - [Policy Numbering by Persona](#policy-numbering-by-persona)
+  - [Deployment Tiers](#deployment-tiers)
 - [Architecture](#architecture)
 - [File Structure](#file-structure)
 - [How to Run](#how-to-run)
@@ -86,7 +133,6 @@ CA-Automation-01/
 │   │   ├── CA003/
 │   │   ├── CA004/
 │   │   ├── CA005/
-│   │   ├── CA006/
 │   │   ├── CA102/
 │   │   ├── CA103/
 │   │   ├── CA104/
@@ -110,7 +156,9 @@ CA-Automation-01/
 │   │   ├── CA214/
 │   │   ├── CA215/
 │   │   ├── CA216/
-│   │   ├── CA217/│   │   ├── CA217/│   │   ├── CA300/
+│   │   ├── CA217/
+│   │   ├── CA218/
+│   │   ├── CA300/
 │   │   ├── CA301/
 │   │   ├── CA302/
 │   │   ├── CA303/
@@ -251,7 +299,6 @@ Policies that apply to **all users** across the tenant.
 | CA003 | `CA003-AdminPortals:Block-For:Global-When:AnyNetwork` | Blocks non-admin users from Admin Portals | [ReadMe](data/ca_policies/CA003/ReadMe.md) |
 | CA004 | `CA004-AllApps:Block-For:Global-When:DeviceCodeAuthTransfer` | Blocks device code authentication transfer flow | [ReadMe](data/ca_policies/CA004/ReadMe.md) |
 | CA005 | `CA005-AllApps:Block-For:Global-When:DeviceCodeFlow` | Blocks device code flow authentication | [ReadMe](data/ca_policies/CA005/ReadMe.md) |
-| CA006 | `CA006-AllApps:Block-For:AllUsers-When:OutsideOfTrustedCountries` | Blocks access from outside trusted countries (CL004) | [ReadMe](data/ca_policies/CA006/ReadMe.md) |
 
 #### Admins — Privileged Access (CA1xx)
 
@@ -290,6 +337,7 @@ Policies targeting **internal employees** across device types, risk levels, and 
 | CA215 | `CA215-AllApps:RequireMFA+PwdReset+EverySignIn-For:Internals-When:RiskyUser:High` | Requires MFA + password reset + every-time reauthentication when user risk is high (Entra ID P2) | [ReadMe](data/ca_policies/CA215/ReadMe.md) |
 | CA216 | `CA216-O365:RequireCompliantDevice-For:Internals-When:OnWindowsDevices` | Requires compliant device for Office 365 on Windows devices | [ReadMe](data/ca_policies/CA216/ReadMe.md) |
 | CA217 | `CA217-O365:Block-For:Internals-When:OnmacOSDevices` | Blocks Office 365 access from macOS devices | [ReadMe](data/ca_policies/CA217/ReadMe.md) |
+| CA218 | `CA218-AllApps:Block-For:Internals-When:OutsideOfTrustedCountries` | Blocks internal users from outside trusted countries (CL004) | [ReadMe](data/ca_policies/CA218/ReadMe.md) |
 
 #### Guests & External — B2B and Service Providers (CA3xx)
 

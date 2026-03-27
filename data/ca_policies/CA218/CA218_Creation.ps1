@@ -1,7 +1,7 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess'
 
-$PolicyID = "CA006"
-$DisplayName = "$PolicyID-AllApps:Block-For:AllUsers-When:OutsideOfTrustedCountries"
+$PolicyID = "CA218"
+$DisplayName = "$PolicyID-AllApps:Block-For:Internals-When:OutsideOfTrustedCountries"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedLocations = @("CL004-CN-A-AllApps-InternalUsers-TrustedCountries")
 $ExcludedGroups = 

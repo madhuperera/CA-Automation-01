@@ -1,19 +1,19 @@
-# CA006 - Block Access from Outside Trusted Countries
+# CA218 - Block Access from Outside Trusted Countries for Internal Users
 
 ## Policy Overview
 
 | Attribute | Value |
 |-----------|-------|
-| **Policy ID** | CA006 |
-| **Display Name** | CA006-AllApps:Block-For:AllUsers-When:OutsideOfTrustedCountries |
+| **Policy ID** | CA218 |
+| **Display Name** | CA218-AllApps:Block-For:Internals-When:OutsideOfTrustedCountries |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
-| **Category** | Foundational Threat Control - Location-Based Access |
+| **Category** | Internal User Access Control - Location-Based |
 
 ---
 
 ## Business Objective
 
-Restrict access to Microsoft 365 applications to users in trusted countries only, reducing exposure to geographically distant attacks while allowing legitimate regional business operations.
+Restrict access to Microsoft 365 applications to internal users in trusted countries only, reducing exposure to geographically distant attacks while allowing legitimate regional business operations.
 
 ## Security Rationale
 
@@ -31,7 +31,7 @@ This policy complements CA001 by blocking access from countries outside an appro
 ### Users
 - **Scope**: All Users
 - **Exclusions**: 
-  - `EID-SEC-U-A-CAP-CA006-Exclude` (employees traveling to excluded countries)
+  - `EID-SEC-U-A-CAP-CA218-Exclude` (employees traveling to excluded countries)
   - Break-glass admin groups
   - Guests/external users (by design)
   - Global Administrator role (policy allows this role)
@@ -69,7 +69,7 @@ This policy complements CA001 by blocking access from countries outside an appro
 ## Exclusion Groups
 
 ### Policy-Specific Exclusion Group
-**`EID-SEC-U-A-CAP-CA006-Exclude`**
+**`EID-SEC-U-A-CAP-CA218-Exclude`**
 - Members can access from any country
 - Use case: Employees traveling temporarily, VPN users in excluded countries, partners
 - **Management**: Add during travel, remove upon return
@@ -146,7 +146,7 @@ This policy depends on:
 ### Security Groups
 | Group | Purpose | Member Count |
 |-------|---------|--------------|
-| `EID-SEC-U-A-CAP-CA006-Exclude` | Temporary travel exemptions | Varies (managed by operations) |
+| `EID-SEC-U-A-CAP-CA218-Exclude` | Temporary travel exemptions | Varies (managed by operations) |
 | `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1` | Emergency admin | 1 |
 | `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2` | Emergency admin | 1 |
 
