@@ -20,10 +20,9 @@ if (-not $hasP2)
 
 Write-Output "Tenant has Entra ID P2 capabilities. Proceeding with policy creation."
 
-
 # Core Variables
-$PolicyID = "CA212"
-$DisplayName = "$PolicyID-AllApps:Block-For:Internals-When:RiskySignIn:High"
+$PolicyID = "CA214"
+$DisplayName = "$PolicyID-AllApps:RequireMFA+EverySignIn-For:Internals-When:RiskyUser:Medium"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
@@ -60,8 +59,8 @@ $ExcludedRoles =
 $ClientAppTypes = "all"
 $IncludedApplications = "All"
 
-# Risky Sign-In Conditions
-$SignInRiskLevels = @("high")
+# Risky User Conditions
+$UserRiskLevels = @("medium")
 
 # Locations
 
@@ -71,10 +70,12 @@ $SignInRiskLevels = @("high")
 
 # Grant Controls
 $Operator = "OR"
-$BuiltInControls = "block"
+$BuiltInControls = "mfa"
 
 # Session Contols
-
+$AuthType = "primaryAndSecondaryAuthentication"
+$FrequencyInterval = "everyTime"
+$IsEnabled = $true
 
 # Generating missing IDs
 $ExcludedGroupIds = @()
@@ -116,12 +117,21 @@ $params =
                         }
                         excludeRoles = $ExcludedRoles
                 }
-                signInRiskLevels = $SignInRiskLevels   
+                userRiskLevels = $UserRiskLevels   
         }
         grantControls = 
         @{
                 operator = $Operator
                 builtInControls = $BuiltInControls
+        }
+        sessionControls = 
+        @{
+                signInFrequency =
+                @{
+                        authenticationType = $AuthType
+                        frequencyInterval = $FrequencyInterval
+                        isEnabled = $IsEnabled
+                }
         }
     }
 

@@ -2,15 +2,15 @@
 
 # Check for Entra ID P2 license
 $skus = Get-MgSubscribedSku
-$p2Skus = 
-@(
-    "AAD_PREMIUM_P2",
-    "EMS_PREMIUM_P2",
-    "ENTERPRISEPREMIUM",
-    "M365EDU_A5_FACULTY",
-    "M365EDU_A5_STUDENT"
-)
-$hasP2 = $skus | Where-Object { $p2Skus -contains $_.SkuPartNumber -and $_.PrepaidUnits.Enabled -gt 0 }
+$enabledSkus = $skus | Where-Object {
+    $_.CapabilityStatus -eq "Enabled" -and $_.PrepaidUnits.Enabled -gt 0
+}
+
+$p2ServicePlans = $enabledSkus |
+    ForEach-Object { $_.ServicePlans } |
+    Where-Object { $_.ServicePlanName -eq "AAD_PREMIUM_P2" }
+
+$hasP2 = $p2ServicePlans.Count -gt 0
 
 if (-not $hasP2) 
 {
@@ -22,7 +22,7 @@ Write-Output "Tenant has Entra ID P2 capabilities. Proceeding with policy creati
 
 # Core Variables
 $PolicyID = "CA211"
-$DisplayName = "$PolicyID-AllApps:Compliant-For:Internals-When:RiskySignIn:Medium"
+$DisplayName = "$PolicyID-AllApps:RequireMFA+EverySignIn-For:Internals-When:RiskySignIn:Medium"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
@@ -70,9 +70,12 @@ $SignInRiskLevels = @("medium")
 
 # Grant Controls
 $Operator = "OR"
-$BuiltInControls = "compliantDevice"
+$BuiltInControls = "mfa"
 
 # Session Contols
+$AuthType = "primaryAndSecondaryAuthentication"
+$FrequencyInterval = "everyTime"
+$IsEnabled = $true
 
 
 # Generating missing IDs
@@ -121,6 +124,15 @@ $params =
         @{
                 operator = $Operator
                 builtInControls = $BuiltInControls
+        }
+        sessionControls = 
+        @{
+            signInFrequency =
+            @{
+                authenticationType = $AuthType
+                frequencyInterval = $FrequencyInterval
+                isEnabled = $IsEnabled
+            }
         }
     }
 

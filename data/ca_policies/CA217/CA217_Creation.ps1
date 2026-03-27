@@ -1,29 +1,8 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
-# Check for Entra ID P2 license
-$skus = Get-MgSubscribedSku
-$enabledSkus = $skus | Where-Object {
-    $_.CapabilityStatus -eq "Enabled" -and $_.PrepaidUnits.Enabled -gt 0
-}
-
-$p2ServicePlans = $enabledSkus |
-    ForEach-Object { $_.ServicePlans } |
-    Where-Object { $_.ServicePlanName -eq "AAD_PREMIUM_P2" }
-
-$hasP2 = $p2ServicePlans.Count -gt 0
-
-if (-not $hasP2) 
-{
-    Write-Warning "Tenant does NOT have Entra ID P2 license. Risk-based conditional access policies are not supported."
-    exit
-}
-
-Write-Output "Tenant has Entra ID P2 capabilities. Proceeding with policy creation."
-
-
 # Core Variables
-$PolicyID = "CA212"
-$DisplayName = "$PolicyID-AllApps:Block-For:Internals-When:RiskySignIn:High"
+$PolicyID = "CA217"
+$DisplayName = "$PolicyID-O365:Block-For:Internals-When:OnmacOSDevices"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
@@ -58,15 +37,16 @@ $ExcludedRoles =
 
 # Applications
 $ClientAppTypes = "all"
-$IncludedApplications = "All"
-
-# Risky Sign-In Conditions
-$SignInRiskLevels = @("high")
+$IncludedApplications = "Office365"
 
 # Locations
 
 
 # Devices
+$IncludedPlatforms = 
+@(
+    "macOS"
+)
 
 
 # Grant Controls
@@ -102,6 +82,10 @@ $params =
                 @{
                         includeApplications = $IncludedApplications
                 }
+                platforms = 
+                @{
+                    includePlatforms = $IncludedPlatforms
+                }
                 users = 
                 @{
                         includeUsers = $IncludedUsers
@@ -116,7 +100,6 @@ $params =
                         }
                         excludeRoles = $ExcludedRoles
                 }
-                signInRiskLevels = $SignInRiskLevels   
         }
         grantControls = 
         @{

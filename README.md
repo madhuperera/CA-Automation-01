@@ -90,6 +90,7 @@ CA-Automation-01/
 │   │   ├── CA102/
 │   │   ├── CA103/
 │   │   ├── CA104/
+│   │   ├── CA105/
 │   │   ├── CA151/
 │   │   ├── CA152/
 │   │   ├── CA200/
@@ -105,7 +106,11 @@ CA-Automation-01/
 │   │   ├── CA210/
 │   │   ├── CA211/
 │   │   ├── CA212/
-│   │   ├── CA300/
+│   │   ├── CA213/
+│   │   ├── CA214/
+│   │   ├── CA215/
+│   │   ├── CA216/
+│   │   ├── CA217/│   │   ├── CA217/│   │   ├── CA300/
 │   │   ├── CA301/
 │   │   ├── CA302/
 │   │   ├── CA303/
@@ -202,7 +207,7 @@ You will be prompted to sign in and consent to these permissions when the script
 ### Policy Structure
 Each policy lives in its own folder: `data/ca_policies/{CA###}/`
 - **CA###_Creation.ps1**: Policy definition (create/update logic)
-- **ReadMe.md**: Business rationale and exclusion documentation
+- **ReadMe.md**: Business rationale, controls summary, exclusions, and testing checklist
 
 ### Policy Definition Pattern
 Every policy script follows this structure:
@@ -257,6 +262,7 @@ Policies targeting **admin roles** and **emergency break-glass accounts**.
 | CA102 | `CA102-AllApps:RequireMFA-For:Admins-When:AnyNetwork` | Requires MFA for all admin role holders | [ReadMe](data/ca_policies/CA102/ReadMe.md) |
 | CA103 | `CA103-AllApps:PhishingResistantMFA-For:Admins` | Requires phishing-resistant MFA (FIDO2/WHfB) for admins | [ReadMe](data/ca_policies/CA103/ReadMe.md) |
 | CA104 | `CA104-AllApps:SessionFrequency-For:Admins` | Enforces 4-hour sign-in frequency for admin sessions | [ReadMe](data/ca_policies/CA104/ReadMe.md) |
+| CA105 | `CA105-AllApps:Block-For:Admins-When:LegacyProtocols` | Blocks legacy authentication protocols for admin roles | [ReadMe](data/ca_policies/CA105/ReadMe.md) |
 | CA151 | `CA151-AllApps:AuthStrength-For:EmergencyBreakGlassAccount1` | Enforces authentication strength for break-glass account 1 | [ReadMe](data/ca_policies/CA151/ReadMe.md) |
 | CA152 | `CA152-AllApps:AuthStrength-For:EmergencyBreakGlassAccount2` | Enforces authentication strength for break-glass account 2 | [ReadMe](data/ca_policies/CA152/ReadMe.md) |
 
@@ -277,8 +283,13 @@ Policies targeting **internal employees** across device types, risk levels, and 
 | CA208 | `CA208-O365:RequireManagedDevice-For:Internals-When:OnWindowsDevices` | Blocks non-company Windows devices from Office 365 (device filter) | [ReadMe](data/ca_policies/CA208/ReadMe.md) |
 | CA209 | `CA209-DeviceEnrollment:RequireMFA-For:Internals-When:OutsideOfOffice` | Requires MFA for Intune device enrollment outside office network | [ReadMe](data/ca_policies/CA209/ReadMe.md) |
 | CA210 | `CA210-AllApps:RequireMFA-For:Internals-When:RiskySignIn:Low` | Requires MFA when sign-in risk is low (Entra ID P2) | [ReadMe](data/ca_policies/CA210/ReadMe.md) |
-| CA211 | `CA211-AllApps:Compliant-For:Internals-When:RiskySignIn:Medium` | Requires compliant device when sign-in risk is medium (Entra ID P2) | [ReadMe](data/ca_policies/CA211/ReadMe.md) |
+| CA211 | `CA211-AllApps:RequireMFA+EverySignIn-For:Internals-When:RiskySignIn:Medium` | Requires MFA + every-time reauthentication when sign-in risk is medium (Entra ID P2) | [ReadMe](data/ca_policies/CA211/ReadMe.md) |
 | CA212 | `CA212-AllApps:Block-For:Internals-When:RiskySignIn:High` | Blocks access when sign-in risk is high (Entra ID P2) | [ReadMe](data/ca_policies/CA212/ReadMe.md) |
+| CA213 | `CA213-AllApps:RequireMFA-For:Internals-When:RiskyUser:Low` | Requires MFA when user risk is low (Entra ID P2) | [ReadMe](data/ca_policies/CA213/ReadMe.md) |
+| CA214 | `CA214-AllApps:RequireMFA+EverySignIn-For:Internals-When:RiskyUser:Medium` | Requires MFA + every-time reauthentication when user risk is medium (Entra ID P2) | [ReadMe](data/ca_policies/CA214/ReadMe.md) |
+| CA215 | `CA215-AllApps:RequireMFA+PwdReset+EverySignIn-For:Internals-When:RiskyUser:High` | Requires MFA + password reset + every-time reauthentication when user risk is high (Entra ID P2) | [ReadMe](data/ca_policies/CA215/ReadMe.md) |
+| CA216 | `CA216-O365:RequireCompliantDevice-For:Internals-When:OnWindowsDevices` | Requires compliant device for Office 365 on Windows devices | [ReadMe](data/ca_policies/CA216/ReadMe.md) |
+| CA217 | `CA217-O365:Block-For:Internals-When:OnmacOSDevices` | Blocks Office 365 access from macOS devices | [ReadMe](data/ca_policies/CA217/ReadMe.md) |
 
 #### Guests & External — B2B and Service Providers (CA3xx)
 
@@ -294,6 +305,14 @@ Policies targeting **guest users**, **B2B collaboration partners**, and **servic
 | CA305 | `CA305-AdminPortals:RequireCompliant-For:ServiceProviderUsers` | Requires compliant device for service providers accessing admin portals | [ReadMe](data/ca_policies/CA305/ReadMe.md) |
 | CA306 | `CA306-AllApps:Block-For:AllGuests-When:UnsupportedDeviceType` | Blocks all guest/external users from unsupported device platforms | [ReadMe](data/ca_policies/CA306/ReadMe.md) |
 | CA307 | `CA307-AllApps:Block-For:AllGuests-When:LegacyProtocols` | Blocks legacy authentication for all guest/external users | [ReadMe](data/ca_policies/CA307/ReadMe.md) |
+
+### Risk-Based License Prerequisite
+
+Risk-based CA policies (e.g., CA210–CA215) validate Entra ID P2 support by:
+
+1. Getting subscribed SKUs via `Get-MgSubscribedSku`
+2. Filtering to SKUs with `CapabilityStatus = Enabled` and `PrepaidUnits.Enabled > 0`
+3. Checking SKU `ServicePlans` for `ServicePlanName = AAD_PREMIUM_P2`
 
 ### Naming Convention for Policies
 

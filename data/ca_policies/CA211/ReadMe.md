@@ -1,11 +1,11 @@
-# CA211 - Require Compliant Device on Medium-Risk Sign-Ins for Internal Users
+# CA211 - Require MFA + Every Sign-In on Medium-Risk Sign-Ins for Internal Users
 
 ## Policy Overview
 
 | Attribute | Value |
 |-----------|-------|
 | **Policy ID** | CA211 |
-| **Display Name** | CA211-AllApps:Compliant-For:Internals-When:RiskySignIn:Medium |
+| **Display Name** | CA211-AllApps:RequireMFA+EverySignIn-For:Internals-When:RiskySignIn:Medium |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Identity Protection - Risk-Based Access Control |
 | **License Requirement** | Entra ID P2 |
@@ -14,14 +14,24 @@
 
 ## Business Objective
 
-Require internal users to access from a compliant device when a medium-risk sign-in is detected by Entra ID Identity Protection, escalating the security requirement beyond MFA for more suspicious sign-in events.
+Enforce stronger interactive verification for medium-risk sign-ins by combining MFA with every-time reauthentication, limiting token persistence for internal users when Identity Protection detects elevated risk.
 
 ## Security Rationale
 
 - **Threat Mitigated**: Credential compromise detected as medium-risk by Identity Protection
 - **Attack Scenario**: Attacker uses stolen credentials from a moderately suspicious pattern (e.g. impossible travel, unfamiliar IP, anonymous IP)
-- **Control Type**: Preventive (requires compliant device to verify trusted endpoint on medium-risk sign-ins)
+- **Control Type**: Preventive (requires MFA and forces reauthentication every time on medium-risk sign-ins)
 - **Risk Level**: Medium
+
+---
+
+## License Prerequisite
+
+The script validates Entra ID P2 capability by:
+
+1. Filtering subscribed SKUs to those where `CapabilityStatus` is `Enabled`
+2. Ensuring `PrepaidUnits.Enabled -gt 0`
+3. Checking included `ServicePlans` for `ServicePlanName = AAD_PREMIUM_P2`
 
 ---
 
@@ -48,25 +58,22 @@ Require internal users to access from a compliant device when a medium-risk sign
 | Control | Setting |
 |---------|---------|
 | **Operator** | OR |
-| **Grant Type** | Require Compliant Device |
+| **Grant Type** | Require MFA |
 
----
+## Session Controls
 
-## Prerequisites
-
-This policy requires **Entra ID P2** licensing. The creation script checks for the following SKUs before deployment:
-- AAD_PREMIUM_P2
-- EMS_PREMIUM_P2
-- ENTERPRISEPREMIUM
-- M365EDU_A5_FACULTY
-- M365EDU_A5_STUDENT
+| Control | Setting |
+|---------|---------|
+| **Sign-In Frequency** | Every time |
+| **Authentication Type** | Primary and secondary |
+| **Enabled** | Yes |
 
 ---
 
 ## User Impact
 - Users with normal or low-risk sign-ins are unaffected
-- Users triggering medium-risk signals must use a compliant device
-- Users on unmanaged devices during a medium-risk event will be blocked
+- Users triggering medium-risk signals must complete MFA and reauthenticate every session
+- Token caching is disabled during medium-risk events to limit exposure window
 
 ---
 
@@ -75,7 +82,7 @@ This policy requires **Entra ID P2** licensing. The creation script checks for t
 | Policy ID | Risk Level | Action |
 |-----------|-----------|--------|
 | CA210 | Low | Require MFA |
-| CA211 | Medium | Require Compliant Device |
+| CA211 | Medium | Require MFA + Every Sign-In |
 | CA212 | High | Block |
 
 ---
@@ -83,7 +90,8 @@ This policy requires **Entra ID P2** licensing. The creation script checks for t
 ## Testing Checklist
 
 - [ ] Entra ID P2 license is present in tenant
-- [ ] Medium-risk sign-ins require compliant device
+- [ ] Medium-risk sign-ins trigger MFA prompt
+- [ ] Sign-in frequency is enforced every time
 - [ ] Normal and low-risk sign-ins are unaffected by this policy
 - [ ] Admin roles are excluded
 - [ ] Guest users are excluded
@@ -103,10 +111,5 @@ This policy requires **Entra ID P2** licensing. The creation script checks for t
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
-| 1.1 | 2026-03-27 | Rewrote stub with full documentation matching PS1 script |
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2025-12-10 | Initial documentation |
+| 1.1 | 2026-02-20 | Updated controls to MFA + every-time sign-in and P2 validation logic |
+| 1.2 | 2026-03-27 | Expanded with full policy conditions, session controls, and testing checklist |

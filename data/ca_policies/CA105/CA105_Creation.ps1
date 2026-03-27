@@ -1,29 +1,8 @@
-# Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
-
-# Check for Entra ID P2 license
-$skus = Get-MgSubscribedSku
-$enabledSkus = $skus | Where-Object {
-    $_.CapabilityStatus -eq "Enabled" -and $_.PrepaidUnits.Enabled -gt 0
-}
-
-$p2ServicePlans = $enabledSkus |
-    ForEach-Object { $_.ServicePlans } |
-    Where-Object { $_.ServicePlanName -eq "AAD_PREMIUM_P2" }
-
-$hasP2 = $p2ServicePlans.Count -gt 0
-
-if (-not $hasP2) 
-{
-    Write-Warning "Tenant does NOT have Entra ID P2 license. Risk-based conditional access policies are not supported."
-    exit
-}
-
-Write-Output "Tenant has Entra ID P2 capabilities. Proceeding with policy creation."
-
+Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
 # Core Variables
-$PolicyID = "CA212"
-$DisplayName = "$PolicyID-AllApps:Block-For:Internals-When:RiskySignIn:High"
+$PolicyID = "CA105"
+$DisplayName = "$PolicyID-AllApps:Block-For:Admins-When:LegacyProtocols"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(
@@ -33,10 +12,7 @@ $ExcludedGroups =
 )
 
 # User Persona: Internals
-$IncludedUsers = "All"
-$GuestMembershipKind = "all"
-$ExcludedGuestTypes = "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
-$ExcludedRoles = 
+$IncludedRoles = 
 @(
     "62e90394-69f5-4237-9190-012177145e10"
     "f2ef992c-3afb-46b9-b7cf-a126ee74c451"
@@ -57,11 +33,12 @@ $ExcludedRoles =
 )
 
 # Applications
-$ClientAppTypes = "all"
+$ClientAppTypes = 
+@(
+    "exchangeActiveSync"
+    "other"
+)
 $IncludedApplications = "All"
-
-# Risky Sign-In Conditions
-$SignInRiskLevels = @("high")
 
 # Locations
 
@@ -104,19 +81,9 @@ $params =
                 }
                 users = 
                 @{
-                        includeUsers = $IncludedUsers
+                        includeRoles = $IncludedRoles
                         excludeGroups = $ExcludedGroupIds
-                        excludeGuestsOrExternalUsers = 
-                        @{
-                            externalTenants =
-                            @{
-                                membershipKind = $GuestMembershipKind
-                            }
-                            guestOrExternalUserTypes = $ExcludedGuestTypes
-                        }
-                        excludeRoles = $ExcludedRoles
                 }
-                signInRiskLevels = $SignInRiskLevels   
         }
         grantControls = 
         @{

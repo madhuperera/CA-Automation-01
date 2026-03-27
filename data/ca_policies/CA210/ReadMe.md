@@ -25,6 +25,16 @@ Require MFA for internal users when a low-risk sign-in is detected by Entra ID I
 
 ---
 
+## License Prerequisite
+
+The script validates Entra ID P2 capability by:
+
+1. Filtering subscribed SKUs to those where `CapabilityStatus` is `Enabled`
+2. Ensuring `PrepaidUnits.Enabled -gt 0`
+3. Checking included `ServicePlans` for `ServicePlanName = AAD_PREMIUM_P2`
+
+---
+
 ## Policy Conditions
 
 ### Users
@@ -52,17 +62,6 @@ Require MFA for internal users when a low-risk sign-in is detected by Entra ID I
 
 ---
 
-## Prerequisites
-
-This policy requires **Entra ID P2** licensing. The creation script checks for the following SKUs before deployment:
-- AAD_PREMIUM_P2
-- EMS_PREMIUM_P2
-- ENTERPRISEPREMIUM
-- M365EDU_A5_FACULTY
-- M365EDU_A5_STUDENT
-
----
-
 ## User Impact
 - Users with normal sign-ins are unaffected
 - Users triggering low-risk signals are prompted for MFA
@@ -75,7 +74,7 @@ This policy requires **Entra ID P2** licensing. The creation script checks for t
 | Policy ID | Risk Level | Action |
 |-----------|-----------|--------|
 | CA210 | Low | Require MFA |
-| CA211 | Medium | Require Compliant Device |
+| CA211 | Medium | Require MFA + Every Sign-In |
 | CA212 | High | Block |
 
 ---
@@ -103,16 +102,5 @@ This policy requires **Entra ID P2** licensing. The creation script checks for t
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
-| 1.1 | 2026-03-27 | Rewrote stub with full documentation matching PS1 script |
-
-- [ ] Policy correctly identifies target users/devices
-- [ ] Grant controls applied as expected
-- [ ] No impact on break-glass accounts
-
----
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2025-12-10 | Initial documentation |
+| 1.1 | 2026-02-20 | Updated to risk-based sign-in documentation and P2 validation logic |
+| 1.2 | 2026-03-27 | Expanded with full policy conditions, grant controls, and testing checklist |
