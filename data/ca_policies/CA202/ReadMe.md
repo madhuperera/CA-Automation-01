@@ -1,11 +1,11 @@
-# CA202 - Require MFA or Compliant Device for Security Info Updates
+# CA202 - Require MFA for Security Information Registration Outside Office
 
 ## Policy Overview
 
 | Attribute | Value |
 |-----------|-------|
 | **Policy ID** | CA202 |
-| **Display Name** | CA202-SecurityInfo:Require-MFAorCompliance-For:AllUsers-When:RegisteringSecurity |
+| **Display Name** | CA202-SecurityInformation:RequireMFAorCompliant-For:Internals-When:OutsideOfOffice |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Identity Security - Account Hardening |
 
@@ -13,13 +13,13 @@
 
 ## Business Objective
 
-Require users to provide MFA or use compliant devices when registering new security information (MFA methods, security keys, etc.), preventing unauthorized account modifications.
+Require internal users to complete MFA when registering new security information (MFA methods, security keys, etc.) from outside trusted office locations and when not on a company-owned compliant device. This prevents unauthorized modification of authentication methods.
 
 ## Security Rationale
 
 - **Threat Mitigated**: Attackers modifying victim's security information to lock them out or maintain backdoor access
-- **Attack Scenario**: Attacker compromises user password and tries to add their own MFA device as backup
-- **Control Type**: Preventive (prevents unauthorized security configuration changes)
+- **Attack Scenario**: Attacker compromises user password and tries to register their own MFA device from an external location
+- **Control Type**: Preventive (prevents unauthorized security configuration changes from untrusted locations/devices)
 - **Risk Level**: High
 
 ---
@@ -28,13 +28,21 @@ Require users to provide MFA or use compliant devices when registering new secur
 
 ### Users
 - **Scope**: All Users
-- **Exclusions**: Break-glass accounts
+- **Excluded**:
+  - All guest/external user types (internalGuest, b2bCollaborationGuest, b2bCollaborationMember, b2bDirectConnectUser, otherExternalUser, serviceProvider)
+  - Admin roles (16 built-in admin role IDs)
+  - Break-glass groups and policy exclusion group (`EID-SEC-U-A-CAP-CA202-Exclude`)
 
-### Applications
-- **Scope**: User registration actions (security info registration)
+### User Actions
+- **Trigger**: `urn:user:registersecurityinfo` (registering security information)
 
 ### Devices
-- **Condition**: Requires MFA OR compliant/managed device
+- **Filter Mode**: Exclude
+- **Excluded Devices**: Company-owned AND compliant devices (`device.deviceOwnership -eq "Company" -and device.isCompliant -eq True`)
+
+### Locations
+- **Included**: All locations
+- **Excluded**: `CL005-IP-A-AllApps-InternalUsers-TrustedLocations` (trusted office locations)
 
 ---
 
@@ -43,22 +51,41 @@ Require users to provide MFA or use compliant devices when registering new secur
 | Control | Setting |
 |---------|---------|
 | **Operator** | OR |
-| **Grant Type** | Require MFA OR Compliant Device |
+| **Grant Type** | Require MFA |
+
+---
+
+## User Impact
+- Users registering security info from trusted office locations are unaffected
+- Users on company-owned compliant devices are unaffected
+- Users outside the office on non-company devices must complete MFA before registering new security info
+- Admin roles are excluded (handled by separate admin policies)
+
+---
+
+## Dependent Resources
+
+| Resource | Name | Purpose |
+|----------|------|---------|
+| Named Location | `CL005-IP-A-AllApps-InternalUsers-TrustedLocations` | Trusted office IP ranges |
 
 ---
 
 ## Testing Checklist
 
-- [ ] Users with MFA can register new security info
-- [ ] Users on compliant devices can register new security info
-- [ ] Users without MFA or compliant device are blocked
+- [ ] Users at office locations can register security info without MFA prompt
+- [ ] Users on company-owned compliant devices can register without MFA prompt
+- [ ] Users outside office on personal devices are prompted for MFA
+- [ ] Admin roles are excluded
+- [ ] Guest users are excluded
+- [ ] Break-glass accounts excluded and functional
 
 ---
 
 ## References
 
-- **Microsoft Graph API**: [Conditional Access Policies](https://learn.microsoft.com/en-us/graph/api/resources/conditionalaccesspolicy)
-- **Device Compliance**: [Device Compliance in Intune](https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started)
+- **Security Info Registration**: [Combined Registration for MFA and SSPR](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-registration-mfa-sspr-combined)
+- **Conditional Access**: [User Actions](https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-cloud-apps#user-actions)
 
 ---
 
@@ -67,3 +94,4 @@ Require users to provide MFA or use compliant devices when registering new secur
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
+| 1.1 | 2026-03-27 | Corrected: display name, user scope (internals not all), location condition, device filter, and grant controls |

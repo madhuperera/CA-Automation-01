@@ -21,6 +21,10 @@ This repository provides **Infrastructure-as-Code automation** for Entra ID Cond
 - [Permissions Required](#permissions-required)
 - [Scripts](#scripts)
 - [CA Policies](#ca-policies)
+  - [Global — Foundational Controls (CA0xx)](#global--foundational-controls-ca0xx)
+  - [Admins — Privileged Access (CA1xx)](#admins--privileged-access-ca1xx)
+  - [Internals — Standard Users (CA2xx)](#internals--standard-users-ca2xx)
+  - [Guests & External — B2B and Service Providers (CA3xx)](#guests--external--b2b-and-service-providers-ca3xx)
 - [Known Locations](#known-locations)
 - [Development Workflows](#development-workflows)
 - [Troubleshooting](#troubleshooting)
@@ -97,6 +101,10 @@ CA-Automation-01/
 │   │   ├── CA206/
 │   │   ├── CA207/
 │   │   ├── CA208/
+│   │   ├── CA209/
+│   │   ├── CA210/
+│   │   ├── CA211/
+│   │   ├── CA212/
 │   │   ├── CA300/
 │   │   ├── CA301/
 │   │   ├── CA302/
@@ -105,7 +113,6 @@ CA-Automation-01/
 │   │   ├── CA305/
 │   │   ├── CA306/
 │   │   ├── CA307/
-│   │   └── ... (additional policies)
 │   └── known_locations/
 │       ├── CL001.psd1
 │       ├── CL002.psd1
@@ -195,7 +202,7 @@ You will be prompted to sign in and consent to these permissions when the script
 ### Policy Structure
 Each policy lives in its own folder: `data/ca_policies/{CA###}/`
 - **CA###_Creation.ps1**: Policy definition (create/update logic)
-- **ReadMe.md**: Business rationale and exclusion documentation (currently empty—recommended to fill)
+- **ReadMe.md**: Business rationale and exclusion documentation
 
 ### Policy Definition Pattern
 Every policy script follows this structure:
@@ -226,13 +233,67 @@ else { New-MgIdentityConditionalAccessPolicy -BodyParameter $params }
 
 ### Included Policies
 
-| Policy | Description | Type |
-|--------|-------------|------|
-| **CA001–CA006** | Core threat controls (unknown locations, device restrictions, legacy protocol blocking) | Foundational |
-| **CA102–CA104** | Admin-specific hardening (MFA, phishing-resistant auth, session frequency) | Privileged Access |
-| **CA151–CA152** | Break-glass account protections (emergency admin authentication) | Emergency Access |
-| **CA200–CA208** | Mobile & unmanaged device controls (app protection, managed device requirement) | Device Management |
-| CA300–CA307 | Guest and B2B access restrictions (country blocks, device requirements, legacy protocols) | External Access |
+Policies are organized into **four personas** based on the user population they target. Each policy folder contains a `CA###_Creation.ps1` (deployment script) and a `ReadMe.md` (business rationale).
+
+#### Global — Foundational Controls (CA0xx)
+
+Policies that apply to **all users** across the tenant.
+
+| Policy | Display Name | Description | Docs |
+|--------|-------------|-------------|------|
+| CA001 | `CA001-AllApps:Block-For:AllUsers-When:UnknownLocations&BouvetIsland` | Blocks access from unknown locations and Bouvet Island (proxy for Algeria via CL001) | [ReadMe](data/ca_policies/CA001/ReadMe.md) |
+| CA002 | `CA002-AzureManagement:RequireMFA-For:Global-When:AnyNetwork` | Requires MFA for Azure Management access | [ReadMe](data/ca_policies/CA002/ReadMe.md) |
+| CA003 | `CA003-AdminPortals:Block-For:Global-When:AnyNetwork` | Blocks non-admin users from Admin Portals | [ReadMe](data/ca_policies/CA003/ReadMe.md) |
+| CA004 | `CA004-AllApps:Block-For:Global-When:DeviceCodeAuthTransfer` | Blocks device code authentication transfer flow | [ReadMe](data/ca_policies/CA004/ReadMe.md) |
+| CA005 | `CA005-AllApps:Block-For:Global-When:DeviceCodeFlow` | Blocks device code flow authentication | [ReadMe](data/ca_policies/CA005/ReadMe.md) |
+| CA006 | `CA006-AllApps:Block-For:AllUsers-When:OutsideOfTrustedCountries` | Blocks access from outside trusted countries (CL004) | [ReadMe](data/ca_policies/CA006/ReadMe.md) |
+
+#### Admins — Privileged Access (CA1xx)
+
+Policies targeting **admin roles** and **emergency break-glass accounts**.
+
+| Policy | Display Name | Description | Docs |
+|--------|-------------|-------------|------|
+| CA102 | `CA102-AllApps:RequireMFA-For:Admins-When:AnyNetwork` | Requires MFA for all admin role holders | [ReadMe](data/ca_policies/CA102/ReadMe.md) |
+| CA103 | `CA103-AllApps:PhishingResistantMFA-For:Admins` | Requires phishing-resistant MFA (FIDO2/WHfB) for admins | [ReadMe](data/ca_policies/CA103/ReadMe.md) |
+| CA104 | `CA104-AllApps:SessionFrequency-For:Admins` | Enforces 4-hour sign-in frequency for admin sessions | [ReadMe](data/ca_policies/CA104/ReadMe.md) |
+| CA151 | `CA151-AllApps:AuthStrength-For:EmergencyBreakGlassAccount1` | Enforces authentication strength for break-glass account 1 | [ReadMe](data/ca_policies/CA151/ReadMe.md) |
+| CA152 | `CA152-AllApps:AuthStrength-For:EmergencyBreakGlassAccount2` | Enforces authentication strength for break-glass account 2 | [ReadMe](data/ca_policies/CA152/ReadMe.md) |
+
+#### Internals — Standard Users (CA2xx)
+
+Policies targeting **internal employees** across device types, risk levels, and app scenarios.
+
+| Policy | Display Name | Description | Docs |
+|--------|-------------|-------------|------|
+| CA200 | `CA200-O365:RequireAppProtectionPolicy-For:AllUsers-When:OnMobileDevices` | Requires app protection policy for Office 365 on mobile (iOS/Android) | [ReadMe](data/ca_policies/CA200/ReadMe.md) |
+| CA201 | `CA201-AllApps:Block-For:Internals-When:UnsupportedDeviceType` | Blocks access from unsupported device platforms | [ReadMe](data/ca_policies/CA201/ReadMe.md) |
+| CA202 | `CA202-SecurityInformation:RequireMFAorCompliant-For:Internals-When:OutsideOfOffice` | Requires MFA or compliant device for security info registration outside office | [ReadMe](data/ca_policies/CA202/ReadMe.md) |
+| CA203 | `CA203-AllApps:SessionFrequency-For:Internals-When:OnUnmanagedDevices` | Enforces 3-hour sign-in frequency on unmanaged/non-compliant devices | [ReadMe](data/ca_policies/CA203/ReadMe.md) |
+| CA204 | `CA204-AllApps:ManagedDevice-For:Internals-When:AnyNetwork` | Blocks access from unmanaged devices (device filter) | [ReadMe](data/ca_policies/CA204/ReadMe.md) |
+| CA205 | `CA205-AllApps:Block-For:Internals-When:LegacyProtocols` | Blocks legacy authentication protocols | [ReadMe](data/ca_policies/CA205/ReadMe.md) |
+| CA206 | `CA206-AllApps:RequireMFA-For:Internals-When:AnyNetwork` | Requires MFA for all internal users | [ReadMe](data/ca_policies/CA206/ReadMe.md) |
+| CA207 | `CA207-AllApps:RequirePasswordless-For:Internals-When:AnyNetwork` | Requires passwordless authentication (auth strength) | [ReadMe](data/ca_policies/CA207/ReadMe.md) |
+| CA208 | `CA208-O365:RequireManagedDevice-For:Internals-When:OnWindowsDevices` | Blocks non-company Windows devices from Office 365 (device filter) | [ReadMe](data/ca_policies/CA208/ReadMe.md) |
+| CA209 | `CA209-DeviceEnrollment:RequireMFA-For:Internals-When:OutsideOfOffice` | Requires MFA for Intune device enrollment outside office network | [ReadMe](data/ca_policies/CA209/ReadMe.md) |
+| CA210 | `CA210-AllApps:RequireMFA-For:Internals-When:RiskySignIn:Low` | Requires MFA when sign-in risk is low (Entra ID P2) | [ReadMe](data/ca_policies/CA210/ReadMe.md) |
+| CA211 | `CA211-AllApps:Compliant-For:Internals-When:RiskySignIn:Medium` | Requires compliant device when sign-in risk is medium (Entra ID P2) | [ReadMe](data/ca_policies/CA211/ReadMe.md) |
+| CA212 | `CA212-AllApps:Block-For:Internals-When:RiskySignIn:High` | Blocks access when sign-in risk is high (Entra ID P2) | [ReadMe](data/ca_policies/CA212/ReadMe.md) |
+
+#### Guests & External — B2B and Service Providers (CA3xx)
+
+Policies targeting **guest users**, **B2B collaboration partners**, and **service provider accounts**.
+
+| Policy | Display Name | Description | Docs |
+|--------|-------------|-------------|------|
+| CA300 | `CA300-AllApps:Block-For:UnallowedGuestTypes-When:AnyNetwork` | Blocks local guest, other external, and service provider users | [ReadMe](data/ca_policies/CA300/ReadMe.md) |
+| CA301 | `CA301-AllApps:Block-For:B2BCollaborationGuests-When:OutsideOfTrustedCountries` | Blocks B2B collaboration guests from outside trusted countries (CL004) | [ReadMe](data/ca_policies/CA301/ReadMe.md) |
+| CA302 | `CA302-AllApps:RequireMFA-For:B2BCollaborationGuests-When:AnyNetwork` | Requires MFA (auth strength) for B2B collaboration guests | [ReadMe](data/ca_policies/CA302/ReadMe.md) |
+| CA303 | `CA303-AllApps:Block-For:ServiceProviderUsers-When:OutsideOfTrustedCountries` | Blocks service provider users from outside trusted countries (CL004) | [ReadMe](data/ca_policies/CA303/ReadMe.md) |
+| CA304 | `CA304-AllApps:RequireMFA-For:ServiceProviderUsers-When:AnyNetwork` | Requires MFA (auth strength) for service provider users | [ReadMe](data/ca_policies/CA304/ReadMe.md) |
+| CA305 | `CA305-AdminPortals:RequireCompliant-For:ServiceProviderUsers` | Requires compliant device for service providers accessing admin portals | [ReadMe](data/ca_policies/CA305/ReadMe.md) |
+| CA306 | `CA306-AllApps:Block-For:AllGuests-When:UnsupportedDeviceType` | Blocks all guest/external users from unsupported device platforms | [ReadMe](data/ca_policies/CA306/ReadMe.md) |
+| CA307 | `CA307-AllApps:Block-For:AllGuests-When:LegacyProtocols` | Blocks legacy authentication for all guest/external users | [ReadMe](data/ca_policies/CA307/ReadMe.md) |
 
 ### Naming Convention for Policies
 
@@ -244,8 +305,8 @@ Display names follow this pattern for clarity:
 
 Examples:
 
-- `CA001-AllApps:Block-For:AllUsers-When:UnknownLocations&Algeria`
-- `CA102-MFA:Require-For:AdminRoles-When:AzureManagement`
+- `CA001-AllApps:Block-For:AllUsers-When:UnknownLocations&BouvetIsland`
+- `CA102-AllApps:RequireMFA-For:Admins-When:AnyNetwork`
 
 ## Known Locations
 

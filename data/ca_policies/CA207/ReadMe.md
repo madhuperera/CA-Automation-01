@@ -5,7 +5,7 @@
 | Attribute | Value |
 |-----------|-------|
 | **Policy ID** | CA207 |
-| **Display Name** | CA207-AllApps:PasswordlessAuth-For:Internals-When:AnyNetwork |
+| **Display Name** | CA207-AllApps:RequirePasswordless-For:Internals-When:AnyNetwork |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Authentication Security - Passwordless |
 
@@ -61,3 +61,4 @@ Passwordless methods (Windows Hello, FIDO2, Authenticator) cannot be phished or 
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
+| 1.1 | 2026-03-27 | Fixed display name to match PS1 script |

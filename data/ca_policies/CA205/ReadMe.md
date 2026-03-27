@@ -5,7 +5,7 @@
 | Attribute | Value |
 |-----------|-------|
 | **Policy ID** | CA205 |
-| **Display Name** | CA205-LegacyAuth:Block-For:Internals-When:AnyNetwork |
+| **Display Name** | CA205-AllApps:Block-For:Internals-When:LegacyProtocols |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Authentication Security - Legacy Protocol |
 
@@ -74,3 +74,4 @@ Legacy protocols do not support MFA, making them vulnerable to password attacks.
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
+| 1.1 | 2026-03-27 | Fixed display name to match PS1 script |

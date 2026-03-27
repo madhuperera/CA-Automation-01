@@ -1,55 +1,87 @@
-# CA303 - MFA for External Collaboration
+# CA303 - Block Service Provider Users Outside Trusted Countries
 
 ## Policy Overview
 
 | Attribute | Value |
 |-----------|-------|
 | **Policy ID** | CA303 |
-| **Display Name** | CA303-AllApps:RequireMFA-For:ExternalUsers-When:AnyNetwork |
+| **Display Name** | CA303-AllApps:Block-For:ServiceProviderUsers-When:OutsideOfTrustedCountries |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
-| **Category** | External/Guest Access Control - Authentication |
+| **Category** | External/Guest Access Control - Geographic |
 
 ---
 
 ## Business Objective
 
-Require multi-factor authentication for guest and external user access to protect shared resources.
+Block Cloud Service Provider (CSP) / service provider users from accessing any application when signing in from outside their trusted countries, restricting partner access to approved geographic locations.
 
 ## Security Rationale
 
-- **Threat Mitigated**: Credential compromise of guest accounts
-- **Attack Scenario**: Attacker uses stolen guest credentials
-- **Control Type**: Preventive (MFA required)
+- **Threat Mitigated**: Compromised CSP/service provider credentials used from unexpected locations
+- **Attack Scenario**: Attacker obtains service provider credentials and signs in from a country outside the trusted list
+- **Control Type**: Preventive (location-based block)
 - **Risk Level**: High
 
 ---
 
-## MFA Methods Required
-- Microsoft Authenticator (preferred)
-- FIDO2 keys
-- Phone sign-in
-- SMS/Voice call (minimum acceptable)
+## Policy Conditions
+
+### Users
+- **Included Guest/External Types**: `serviceProvider`
+- **External Tenants**: All (membershipKind = all)
+- **Exclusion Groups**:
+  - `EID-SEC-U-A-CAP-CA303-Exclude`
+  - `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1`
+  - `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2`
+
+### Applications
+- **Scope**: All Applications
+- **Client App Types**: All
+
+### Locations
+- **Included**: All locations
+- **Excluded**: `CL003-CN-A-AllApps-ServiceProviderUsers-TrustedCountries` (trusted countries for service providers)
+
+---
+
+## Grant Controls
+
+| Control | Setting |
+|---------|--------|
+| **Operator** | OR |
+| **Grant Type** | Block |
 
 ---
 
 ## User Impact
-- External users must register MFA method
-- Setup: 10-20 minutes
-- Ongoing access requires MFA
+- Service provider users signing in from trusted countries are unaffected
+- Service provider users outside trusted countries are blocked
+- Travel exemptions: Add user to `EID-SEC-U-A-CAP-CA303-Exclude` group temporarily
+
+---
+
+## Dependent Resources
+
+| Resource | Name | Purpose |
+|----------|------|---------|
+| Named Location | `CL003-CN-A-AllApps-ServiceProviderUsers-TrustedCountries` | Defines approved countries for service provider access |
 
 ---
 
 ## Testing Checklist
 
-- [ ] Guest users can register MFA
-- [ ] MFA required on each sign-in
-- [ ] All MFA methods available
+- [ ] Service providers in trusted countries can access
+- [ ] Service providers outside trusted countries are blocked
+- [ ] Named location `CL003` exists and is correctly configured
+- [ ] Break-glass accounts excluded and functional
+- [ ] Other guest types (B2B guests, etc.) are not affected
 
 ---
 
 ## References
 
-- **MFA**: [Microsoft Authenticator](https://learn.microsoft.com/en-us/azure/active-directory/authentication/concept-authentication-authenticator-app)
+- **Named Locations**: [Conditional Access Named Locations](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/location-condition)
+- **CSP Access**: [Cloud Solution Provider Program](https://learn.microsoft.com/en-us/partner-center/csp-overview)
 
 ---
 
@@ -58,3 +90,4 @@ Require multi-factor authentication for guest and external user access to protec
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
+| 1.1 | 2026-03-27 | Corrected: policy blocks service providers outside trusted countries (not MFA for all external users) |

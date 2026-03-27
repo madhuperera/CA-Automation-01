@@ -42,7 +42,7 @@ This policy is a foundational control that blocks access attempts originating fr
 - **Client App Types**: All (browser, mobile, desktop, etc.)
 
 ### Locations
-- **Included**: Unknown locations (via Bouvet Island proxy) - `CL001-CN-B-M365Apps-AllUsers-UnknownLocations&BouvetIsland`
+- **Included**: Unknown locations (via Bouvet Island proxy) - `CL001-CN-B-M365Apps-AllUsers-UnknownLocations&Algeria`
 - **Excluded**: None
 - **Technical Implementation**: Named location uses Bouvet Island (BV) country code with `IncludeUnknownCountriesAndRegions = $true` to detect unresolvable geolocation
 - **Rationale**: Since Bouvet Island has no legitimate user population, any detected connection from it is actually an unresolved geolocation (VPN, proxy, or spoofed location)
@@ -141,7 +141,7 @@ This policy depends on the following named location being defined in the tenant:
 
 | Location ID | Display Name | Type | Country Code | Unknown Locations | Description |
 |------------|--------------|------|--------------|-------------------|-------------|
-| `CL001` | CL001-CN-B-M365Apps-AllUsers-UnknownLocations&BouvetIsland | Country-Based | BV (Bouvet Island) | ✅ Enabled | Detects unresolved geolocation + unused country code |
+| `CL001` | CL001-CN-B-M365Apps-AllUsers-UnknownLocations&Algeria | Country-Based | BV (Bouvet Island) | ✅ Enabled | Detects unresolved geolocation + unused country code |
 
 **Technical Detail**: The Bouvet Island country code (BV) is intentionally selected as a "trap" for unknown locations. Since no legitimate users connect from Bouvet Island, any hits on this location are actually unresolved geolocations from VPNs, proxies, or spoofed locations. The `IncludeUnknownCountriesAndRegions = $true` flag enables this detection.
 
@@ -258,6 +258,7 @@ Before enforcing this policy, verify:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial template documentation |
+| 1.1 | 2026-03-27 | Fixed named location reference to match PS1 (CL001 uses Algeria, not BouvetIsland) |
 
 ---
 
