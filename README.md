@@ -198,8 +198,19 @@ CA-Automation-01/
 4. **Run the main script**:
 
    ```powershell
+   # Deploy ALL policies (Core + Advanced) — this is the default
    .\main_script.ps1
+
+   # Deploy only the Core baseline policies (22 policies)
+   .\main_script.ps1 -Mode Core
    ```
+
+   | Mode | Policies Deployed | Use Case |
+   |------|-------------------|----------|
+   | `Advanced` (default) | All 38 policies | Full deployment for mature environments |
+   | `Core` | 22 baseline policies | New tenant onboarding or minimum security baseline |
+
+   The Core policy list is defined in `data/policy_tiers.psd1`. When running in Core mode, only the policies listed there (and their exclusion groups) are created.
 
    The script will prompt you to confirm your Microsoft Graph session and tenant. It will sequentially execute scripts to create known locations, break glass groups, exclusion groups, and CA policies.
 

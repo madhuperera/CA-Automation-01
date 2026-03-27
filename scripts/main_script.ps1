@@ -39,22 +39,26 @@ else
 }
 
 
+# IMPORTANT: Use dot-sourcing (.) not the call operator (&) for child scripts.
+# Dot-sourcing runs them in this script's scope so they can read $script:PolicyFilter.
+# Using & would create a new scope where $script:PolicyFilter is $null, ignoring the Core/Advanced filter.
+
 Write-Output "Creating Known Locations ...."
 $createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_known_locations.ps1"
-& $createLocationsScript
+. $createLocationsScript
 $createLocationsScript = $null
 
 Write-Output "Creating Break Glass Groups ...."
 $createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_break_glass_groups.ps1"
-& $createLocationsScript
+. $createLocationsScript
 $createLocationsScript = $null
 
 Write-Output "Creating Exclusion Groups ...."
 $createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_groups.ps1"
-& $createLocationsScript
+. $createLocationsScript
 $createLocationsScript = $null
 
 Write-Output "Creating Conditonal Access Policies ...."
 $createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_ca_policies.ps1"
-& $createLocationsScript
+. $createLocationsScript
 $createLocationsScript = $null
