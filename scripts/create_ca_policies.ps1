@@ -6,6 +6,11 @@ $scriptDir = $PSScriptRoot
 $CAPolicyFolder = Join-Path -Path $scriptDir -ChildPath "..\data\ca_policies"
 
 $AllCAPolicies = Get-ChildItem -Path $CAPolicyFolder -Recurse -File -Include "*.ps1" | Select-Object -ExpandProperty FullName
+
+if ($script:PolicyFilter) {
+    $AllCAPolicies = $AllCAPolicies | Where-Object { (Split-Path (Split-Path $_ -Parent) -Leaf) -in $script:PolicyFilter }
+}
+
 $TotalCount = $AllCAPolicies.Count
 $CurrentCount = 0
 

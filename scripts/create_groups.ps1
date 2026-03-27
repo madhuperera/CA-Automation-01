@@ -8,6 +8,10 @@ $CAPolicyFolder = Join-Path -Path $scriptDir -ChildPath "..\data\ca_policies"
 
 $AllCAPolicies = Get-ChildItem -Path $CAPolicyFolder -Directory | Select-Object -ExpandProperty Name
 
+if ($script:PolicyFilter) {
+    $AllCAPolicies = $AllCAPolicies | Where-Object { $_ -in $script:PolicyFilter }
+}
+
 if ($AllCAPolicies.Count -eq 0)
 {
     Write-Output "No CA Policies found in $CAPolicyFolder"

@@ -1,3 +1,8 @@
+param(
+    [ValidateSet("Core","Advanced")]
+    [string]$Mode = "Advanced"
+)
+
 $RequireScopes = 'Policy.Read.All','Policy.ReadWrite.ConditionalAccess','Group.ReadWrite.All','Application.Read.All'
 Disconnect-MgGraph -ErrorAction SilentlyContinue
 Connect-MgGraph -Scopes $RequireScopes
@@ -19,6 +24,19 @@ else
     exit 1
 }
 $scriptDir = $PSScriptRoot
+
+# Load policy filter if Core mode selected
+if ($Mode -eq "Core")
+{
+    $tiers = Import-PowerShellDataFile (Join-Path $scriptDir "..\data\policy_tiers.psd1")
+    $script:PolicyFilter = $tiers.Core
+    Write-Output "Mode: Core - deploying $($script:PolicyFilter.Count) baseline policies"
+}
+else
+{
+    $script:PolicyFilter = $null
+    Write-Output "Mode: Advanced - deploying all policies"
+}
 
 
 Write-Output "Creating Known Locations ...."

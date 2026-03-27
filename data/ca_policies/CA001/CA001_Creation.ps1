@@ -2,7 +2,7 @@
 
 # Core Variables
 $PolicyID = "CA001"
-$DisplayName = "$PolicyID-AllApps:Block-For:AllUsers-When:UnknownLocations&BouvetIsland"
+$DisplayName = "$PolicyID-AllApps:Block-For:Global-When:UnknownLocations&BouvetIsland"
 $State = "enabledForReportingButNotEnforced"
 $ExcludedGroups = 
 @(

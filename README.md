@@ -19,7 +19,8 @@ Each CA policy number range maps to a specific user persona:
 | Range | Persona | Description |
 |-------|---------|-------------|
 | **CA000–CA099** | Global | Foundational controls applied to all users |
-| **CA100–CA199** | Admins | Privileged access hardening for admin roles and break-glass accounts |
+| **CA100–CA149** | Admins | Privileged access hardening for admin roles |
+| **CA150–CA152** | Break-Glass | Emergency access account protections |
 | **CA200–CA299** | Internals | Controls for internal employees (devices, risk, apps) |
 | **CA300–CA399** | Guests & External | Restrictions for B2B guests, service providers, and external users |
 | **CA800–CA899** | Custom | Targeted policies for specific groups or scenarios (e.g. IP restrictions for a subset of users) |
@@ -294,7 +295,7 @@ Policies that apply to **all users** across the tenant.
 
 | Policy | Display Name | Description | Docs |
 |--------|-------------|-------------|------|
-| CA001 | `CA001-AllApps:Block-For:AllUsers-When:UnknownLocations&BouvetIsland` | Blocks access from unknown locations and Bouvet Island (proxy for Algeria via CL001) | [ReadMe](data/ca_policies/CA001/ReadMe.md) |
+| CA001 | `CA001-AllApps:Block-For:Global-When:UnknownLocations&BouvetIsland` | Blocks access from unknown locations and Bouvet Island (proxy for Algeria via CL001) | [ReadMe](data/ca_policies/CA001/ReadMe.md) |
 | CA002 | `CA002-AzureManagement:RequireMFA-For:Global-When:AnyNetwork` | Requires MFA for Azure Management access | [ReadMe](data/ca_policies/CA002/ReadMe.md) |
 | CA003 | `CA003-AdminPortals:Block-For:Global-When:AnyNetwork` | Blocks non-admin users from Admin Portals | [ReadMe](data/ca_policies/CA003/ReadMe.md) |
 | CA004 | `CA004-AllApps:Block-For:Global-When:DeviceCodeAuthTransfer` | Blocks device code authentication transfer flow | [ReadMe](data/ca_policies/CA004/ReadMe.md) |
@@ -307,11 +308,11 @@ Policies targeting **admin roles** and **emergency break-glass accounts**.
 | Policy | Display Name | Description | Docs |
 |--------|-------------|-------------|------|
 | CA102 | `CA102-AllApps:RequireMFA-For:Admins-When:AnyNetwork` | Requires MFA for all admin role holders | [ReadMe](data/ca_policies/CA102/ReadMe.md) |
-| CA103 | `CA103-AllApps:PhishingResistantMFA-For:Admins` | Requires phishing-resistant MFA (FIDO2/WHfB) for admins | [ReadMe](data/ca_policies/CA103/ReadMe.md) |
-| CA104 | `CA104-AllApps:SessionFrequency-For:Admins` | Enforces 4-hour sign-in frequency for admin sessions | [ReadMe](data/ca_policies/CA104/ReadMe.md) |
+| CA103 | `CA103-AllApps:PhishingResistantMFA-For:Admins-When:AnyNetwork` | Requires phishing-resistant MFA (FIDO2/WHfB) for admins | [ReadMe](data/ca_policies/CA103/ReadMe.md) |
+| CA104 | `CA104-AllApps:SessionFrequency-For:Admins-When:AnyNetwork` | Enforces 4-hour sign-in frequency for admin sessions | [ReadMe](data/ca_policies/CA104/ReadMe.md) |
 | CA105 | `CA105-AllApps:Block-For:Admins-When:LegacyProtocols` | Blocks legacy authentication protocols for admin roles | [ReadMe](data/ca_policies/CA105/ReadMe.md) |
-| CA151 | `CA151-AllApps:AuthStrength-For:EmergencyBreakGlassAccount1` | Enforces authentication strength for break-glass account 1 | [ReadMe](data/ca_policies/CA151/ReadMe.md) |
-| CA152 | `CA152-AllApps:AuthStrength-For:EmergencyBreakGlassAccount2` | Enforces authentication strength for break-glass account 2 | [ReadMe](data/ca_policies/CA152/ReadMe.md) |
+| CA151 | `CA151-AllApps:AuthStrength-For:EmergencyBreakGlassAccount1-When:AnyNetwork` | Enforces authentication strength for break-glass account 1 | [ReadMe](data/ca_policies/CA151/ReadMe.md) |
+| CA152 | `CA152-AllApps:AuthStrength-For:EmergencyBreakGlassAccount2-When:AnyNetwork` | Enforces authentication strength for break-glass account 2 | [ReadMe](data/ca_policies/CA152/ReadMe.md) |
 
 #### Internals — Standard Users (CA2xx)
 
@@ -345,7 +346,7 @@ Policies targeting **guest users**, **B2B collaboration partners**, and **servic
 
 | Policy | Display Name | Description | Docs |
 |--------|-------------|-------------|------|
-| CA300 | `CA300-AllApps:Block-For:UnallowedGuestTypes-When:AnyNetwork` | Blocks local guest, other external, and service provider users | [ReadMe](data/ca_policies/CA300/ReadMe.md) |
+| CA300 | `CA300-AllApps:Block-For:Guests-When:UnallowedGuestType` | Blocks local guest, other external, and service provider users | [ReadMe](data/ca_policies/CA300/ReadMe.md) |
 | CA301 | `CA301-AllApps:Block-For:B2BCollaborationGuests-When:OutsideOfTrustedCountries` | Blocks B2B collaboration guests from outside trusted countries (CL004) | [ReadMe](data/ca_policies/CA301/ReadMe.md) |
 | CA302 | `CA302-AllApps:RequireMFA-For:B2BCollaborationGuests-When:AnyNetwork` | Requires MFA (auth strength) for B2B collaboration guests | [ReadMe](data/ca_policies/CA302/ReadMe.md) |
 | CA303 | `CA303-AllApps:Block-For:ServiceProviderUsers-When:OutsideOfTrustedCountries` | Blocks service provider users from outside trusted countries (CL004) | [ReadMe](data/ca_policies/CA303/ReadMe.md) |
@@ -372,7 +373,7 @@ Display names follow this pattern for clarity:
 
 Examples:
 
-- `CA001-AllApps:Block-For:AllUsers-When:UnknownLocations&BouvetIsland`
+- `CA001-AllApps:Block-For:Global-When:UnknownLocations&BouvetIsland`
 - `CA102-AllApps:RequireMFA-For:Admins-When:AnyNetwork`
 
 ## Known Locations

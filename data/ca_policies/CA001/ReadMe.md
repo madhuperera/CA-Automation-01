@@ -1,11 +1,11 @@
-# CA001 - Block All Apps for All Users from Unknown Locations
+# CA001 - Block All Apps for Global from Unknown Locations
 
 ## Policy Overview
 
 | Attribute | Value |
 |-----------|-------|
 | **Policy ID** | CA001 |
-| **Display Name** | CA001-AllApps:Block-For:AllUsers-When:UnknownLocations&BouvetIsland |
+| **Display Name** | CA001-AllApps:Block-For:Global-When:UnknownLocations&BouvetIsland |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Foundational Threat Control - Location-Based Access |
 
