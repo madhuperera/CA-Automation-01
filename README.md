@@ -41,7 +41,7 @@ These policies must be deployed in every tenant.
 |---------|----------|
 | **Global** | CA001, CA002, CA004, CA005 |
 | **Admins** | CA102, CA104, CA105, CA151, CA152 |
-| **Internals** | CA200, CA201, CA205, CA206, CA209, CA218 |
+| **Internals** | CA201, CA205, CA206, CA209, CA218 |
 | **Guests & External** | CA300, CA301, CA302, CA303, CA304, CA306, CA307 |
 
 #### Advanced Policies
@@ -52,6 +52,7 @@ These policies add defence-in-depth and are recommended for mature environments.
 |---------|----------|-------|
 | **Global** | CA003 | Admin portal blocking |
 | **Admins** | CA103 | Phishing-resistant MFA |
+| **Internals** | CA200 | App protection policy on mobile devices |
 | **Internals** | CA202, CA203, CA204, CA207, CA208 | Device management & session controls |
 | **Internals** | CA210, CA211, CA212 | Sign-in risk (requires Entra ID P2) |
 | **Internals** | CA213, CA214, CA215 | User risk (requires Entra ID P2) |
@@ -201,14 +202,14 @@ CA-Automation-01/
    # Deploy ALL policies (Core + Advanced) — this is the default
    .\main_script.ps1
 
-   # Deploy only the Core baseline policies (22 policies)
+   # Deploy only the Core baseline policies (21 policies)
    .\main_script.ps1 -Mode Core
    ```
 
    | Mode | Policies Deployed | Use Case |
    |------|-------------------|----------|
    | `Advanced` (default) | All 38 policies | Full deployment for mature environments |
-   | `Core` | 22 baseline policies | New tenant onboarding or minimum security baseline |
+   | `Core` | 21 baseline policies | New tenant onboarding or minimum security baseline |
 
    The Core policy list is defined in `data/policy_tiers.psd1`. When running in Core mode, only the policies listed there (and their exclusion groups) are created.
 
