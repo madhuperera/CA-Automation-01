@@ -30,7 +30,7 @@ $IncludedApplications = "All"
 
 
 # Locations
-$IncludedLocations = @("CL001-CN-B-M365Apps-AllUsers-UnknownLocations&Algeria")
+$IncludedLocations = @("CL001-CN-B-M365Apps-AllUsers-UnknownLocations&BouvetIsland")
 $LocationIds = @()
 foreach ($location in $IncludedLocations)
 {
