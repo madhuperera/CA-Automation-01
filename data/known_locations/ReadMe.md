@@ -52,7 +52,7 @@ Named locations define geographic and network-based access conditions used by Co
 
 **Purpose**: Defines trusted countries for internal employees.
 
-**Used By**: CA006
+**Used By**: CA218
 
 **Travel Exemption**: Employees traveling outside NZ need to contact IT security for temporary exemption or use VPN to NZ office.
 
