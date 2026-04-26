@@ -160,7 +160,7 @@ Before enforcing this policy, verify:
 - [ ] Named location contains all countries where business operates
 - [ ] Audit logs show access from expected countries only (no anomalies)
 - [ ] Travel exemption process documented and communicated
-- [ ] Exclusion group exists: `EID-SEC-U-A-CAP-CA006-Exclude`
+- [ ] Exclusion group exists: `EID-SEC-U-A-CAP-CA218-Exclude`
 - [ ] Break-glass admin groups have expected access
 - [ ] Policy does not block access from legitimate business countries
 - [ ] Support team trained on country exclusion requests
@@ -176,7 +176,7 @@ Before enforcing this policy, verify:
 - ISP geotagged to excluded country
 
 **Resolution**: 
-- Add user to `EID-SEC-U-A-CAP-CA006-Exclude` group (temporary)
+- Add user to `EID-SEC-U-A-CAP-CA218-Exclude` group (temporary)
 - Or add country to CL004 named location if legitimate business need
 - Or suggest user use VPN in trusted country
 - After travel: Remove from exclusion group
@@ -201,7 +201,7 @@ Before enforcing this policy, verify:
 - Review audit logs to identify blocked countries
 - Add legitimate business countries to CL004.psd1
 - Update named location definition
-- Re-run `CA006_Creation.ps1` to apply changes
+- Re-run `CA218_Creation.ps1` to apply changes
 
 ---
 
@@ -228,7 +228,7 @@ Before enforcing this policy, verify:
 
 ### How to Modify
 1. Edit `data/known_locations/CL004.psd1` to adjust trusted countries
-2. Or edit `CA006_Creation.ps1` to update exclusion groups
+2. Or edit `CA218_Creation.ps1` to update exclusion groups
 3. Test changes in non-production tenant first
 4. Run `.\scripts\main_script.ps1` to apply
 
