@@ -1,0 +1,65 @@
+name: Weekly CA Documentation Agent
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # Monday 6:00 AM NZST / Monday 7:00 AM NZDT
+    # GitHub cron runs in UTC.
+    - cron: "0 18 * * 0"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  create-copilot-documentation-task:
+    name: Create Copilot documentation task
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create issue for Copilot documentation review
+        env:
+          GH_TOKEN: ${{ secrets.CA_DOCS_AGENT_PAT }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ISSUE_URL=$(gh issue create \
+            --title "Weekly CA-Automation-01 documentation review" \
+            --body "Use the CA Documentation Agent custom agent.
+
+          Review the CA-Automation-01 repository for documentation accuracy only.
+
+          Do not change any .ps1, .psd1, JSON template, workflow, or agent profile files.
+
+          Compare:
+          - Root README.md
+          - data/ca_policies/**/ReadMe.md
+          - data/ca_policies/**/CA*_Creation.ps1
+          - data/known_locations/*.psd1
+          - data/policy_tiers.psd1
+          - scripts/*.ps1
+
+          Tasks:
+          1. Build an inventory of current policy folders, policy scripts, policy README files, known location files, and scripts.
+          2. Compare the root README.md policy catalogue against the actual policy folders.
+          3. Compare the Core and Advanced policy lists in the root README.md against data/policy_tiers.psd1.
+          4. Compare each policy-level ReadMe.md against its associated CA###_Creation.ps1.
+          5. Update policy-level README files only where they are missing, stale, incomplete, or inaccurate.
+          6. Update the root README.md only where repository structure, policy catalogue, script responsibilities, known locations, or tier information is outdated.
+          7. Preserve the existing root README styling, HTML tables, badges, capsule header/footer, collapsible sections, and section order.
+          8. Open a pull request only if documentation changes are required.
+
+          Pull request requirements:
+          - Summarise which documentation files changed.
+          - Explain why each file changed.
+          - Confirm no script or policy logic was changed.
+          - Confirm no .ps1, .psd1, JSON template, workflow, or agent profile files were changed.
+          - Mention any assumptions or unclear script behaviours.
+
+          If no documentation updates are required, close this issue with a short summary and do not create a pull request.")
+
+          echo "Created issue: $ISSUE_URL"
+
+          ISSUE_NUMBER=$(echo "$ISSUE_URL" | awk -F/ '{print $NF}')
+
+          gh issue edit "$ISSUE_NUMBER" --add-assignee "@copilot"
