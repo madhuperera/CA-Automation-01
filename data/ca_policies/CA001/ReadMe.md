@@ -218,7 +218,7 @@ Before enforcing this policy, verify:
 
 | Policy ID | Relationship | Purpose |
 |-----------|--------------|---------|
-| CA006 | Sibling | Extends location-based blocking to additional countries |
+| CA218 | Complementary | Blocks internal users from outside trusted countries |
 | CA102-CA104 | Complementary | Admin-specific hardening policies |
 | CA200-CA208 | Complementary | Device-based access controls |
 
