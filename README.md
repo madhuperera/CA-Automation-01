@@ -1,7 +1,3 @@
-<div style="background-color:#b71c1c; color:#fff; padding:12px; border-radius:6px; font-weight:bold;">
-⚠️ <strong>WARNING:</strong> The content below is AI generated. Please review and validate before using in production.
-</div>
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1d4ed8,100:38bdf8&height=180&section=header&text=CA-Automation-01&fontSize=42&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Entra%20ID%20Conditional%20Access%20%7C%20PowerShell%20%7C%20Microsoft%20Graph%20%7C%20Security%20Baseline&descAlignY=55&descSize=15" />
 </p>
