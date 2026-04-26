@@ -34,8 +34,9 @@ Managed devices (Intune-enrolled) allow longer sessions because they have additi
 - **Excluded**: Administrative roles, guests/external users
 
 ### Devices
-- **Condition**: Unmanaged devices only (not Azure AD joined or compliant)
-- **Device Filter**: `device.trustType -eq "AzureAD" OR device.isCompliant -eq True` (EXCLUDED)
+- **Condition**: Unmanaged devices only
+- **Device Filter**: Excluded rule — `device.trustType -eq "AzureAD" -or device.trustType -eq "ServerAD" -or device.isCompliant -eq True -or device.deviceOwnership -eq "Company"`
+- **Net effect**: Policy applies only to devices that are not Azure AD joined, not hybrid-joined (ServerAD), not compliant, and not company-owned
 
 ---
 
@@ -46,7 +47,6 @@ Managed devices (Intune-enrolled) allow longer sessions because they have additi
 | **Session Type** | Sign-in Frequency |
 | **Frequency** | Every 3 hours |
 | **Authentication Type** | Primary + Secondary |
-| **Persistent Browser** | Never |
 
 ---
 

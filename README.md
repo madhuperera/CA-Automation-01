@@ -141,7 +141,6 @@ CA-Automation-01/
 ├── README.md
 │
 ├── data/
-│   ├── adminstrative_units/
 │   ├── ca_policies/
 │   │   ├── CA001/
 │   │   ├── CA002/
@@ -478,12 +477,12 @@ else
 
 | Policy | Display name | Description | Docs |
 |---|---|---|---|
-| CA300 | `CA300-AllApps:Block-For:Guests-When:UnallowedGuestType` | Blocks unallowed external user types | [ReadMe](data/ca_policies/CA300/ReadMe.md) |
+| CA300 | `CA300-AllApps:Block-For:UnallowedGuestTypes-When:AnyNetwork` | Blocks unallowed external user types | [ReadMe](data/ca_policies/CA300/ReadMe.md) |
 | CA301 | `CA301-AllApps:Block-For:B2BCollaborationGuests-When:OutsideOfTrustedCountries` | Blocks B2B guests from outside trusted countries | [ReadMe](data/ca_policies/CA301/ReadMe.md) |
 | CA302 | `CA302-AllApps:RequireMFA-For:B2BCollaborationGuests-When:AnyNetwork` | Requires MFA for B2B collaboration guests | [ReadMe](data/ca_policies/CA302/ReadMe.md) |
 | CA303 | `CA303-AllApps:Block-For:ServiceProviderUsers-When:OutsideOfTrustedCountries` | Blocks service provider users from outside trusted countries | [ReadMe](data/ca_policies/CA303/ReadMe.md) |
 | CA304 | `CA304-AllApps:RequireMFA-For:ServiceProviderUsers-When:AnyNetwork` | Requires MFA for service provider users | [ReadMe](data/ca_policies/CA304/ReadMe.md) |
-| CA305 | `CA305-AdminPortals:RequireCompliant-For:ServiceProviderUsers` | Requires compliant device for service provider admin portal access | [ReadMe](data/ca_policies/CA305/ReadMe.md) |
+| CA305 | `CA305-AdminPortals:RequireCompliant-For:ServiceProviderUsers-When:AnyNetwork` | Requires compliant device for service provider admin portal access | [ReadMe](data/ca_policies/CA305/ReadMe.md) |
 | CA306 | `CA306-AllApps:Block-For:AllGuests-When:UnsupportedDeviceType` | Blocks guest and external users from unsupported devices | [ReadMe](data/ca_policies/CA306/ReadMe.md) |
 | CA307 | `CA307-AllApps:Block-For:AllGuests-When:LegacyProtocols` | Blocks legacy authentication for guest and external users | [ReadMe](data/ca_policies/CA307/ReadMe.md) |
 

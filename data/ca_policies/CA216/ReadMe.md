@@ -5,6 +5,7 @@
 | Attribute | Value |
 |-----------|-------|
 | **Policy ID** | CA216 |
+| **Display Name** | CA216-O365:RequireCompliantDevice-For:Internals-When:OnWindowsDevices |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Device Management |
 | **Applies To** | Internal users, Office 365 cloud apps, Windows platform |
