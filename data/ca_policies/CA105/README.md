@@ -100,8 +100,8 @@ Run this policy as part of the CA-Automation-01 orchestration:
 ## Related Policies
 
 Similar policies in this repository:
-- **CA101-CA104**: Other administrative access control policies
-- **CA151-CA152**: Device compliance policies
+- **CA102-CA104**: Other administrative access control policies
+- **CA151-CA152**: Authentication strength policies for break-glass accounts
 - **CA200-CA212**: Application and location-based policies
 
 ## Support & Questions

@@ -516,10 +516,10 @@ data/known_locations/
 ```powershell
 @{
     "@odata.type" = "#microsoft.graph.ipNamedLocation"
-    DisplayName = "CL002-IP-Trusted-Corporate-Network"
+    DisplayName = "CL005-IP-A-AllApps-InternalUsers-TrustedLocations"
+    IsTrusted = $true
     IpRanges = @(
-        @{ CIDRAddress = "192.0.2.0/24" }
-        @{ CIDRAddress = "198.51.100.0/24" }
+        @{ CidrAddress = "10.0.0.0/24" }
     )
 }
 ```
@@ -534,7 +534,7 @@ Examples:
 
 ```text
 CL001-CN-B-M365Apps-AllUsers-UnknownLocations&BouvetIsland
-CL002-IP-Trusted-NZ-HQ
+CL005-IP-A-AllApps-InternalUsers-TrustedLocations
 ```
 
 ---
