@@ -57,11 +57,12 @@ This policy targets the Azure Management application specifically, ensuring that
 
 | Control | Setting |
 |---------|---------|
-| **Operator** | OR (enforces if ANY condition matches) |
-| **Grant Type** | Multifactor Authentication |
+| **Operator** | OR |
+| **Grant Type** | Authentication Strength — Multi-Factor Authentication |
+| **Auth Strength ID** | `00000000-0000-0000-0000-000000000002` (built-in MFA authentication strength) |
 | **Session Controls** | None |
 
-**Effect**: **Require MFA** - User must provide second factor (authenticator app, phone, FIDO key) to access Azure Management.
+**Effect**: **Require MFA** — User must satisfy the built-in Multi-Factor Authentication strength (authenticator app, FIDO2, phone sign-in, or similar) to access Azure Management. This policy uses an Authentication Strength control, not the simpler `builtInControls = "mfa"` approach.
 
 ---
 
@@ -242,3 +243,4 @@ Before enforcing this policy, verify:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial template documentation |
+| 1.1 | 2026-06-18 | Corrected grant controls: policy uses Authentication Strength control (ID 00000000-0000-0000-0000-000000000002), not builtInControls mfa |

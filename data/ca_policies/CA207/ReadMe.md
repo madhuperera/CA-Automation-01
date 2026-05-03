@@ -26,6 +26,39 @@ Passwordless methods (Windows Hello, FIDO2, Authenticator) cannot be phished or 
 
 ---
 
+## Policy Conditions
+
+### Users
+- **Scope**: All Users
+- **Excluded**:
+  - All guest/external user types (internalGuest, b2bCollaborationGuest, b2bCollaborationMember, b2bDirectConnectUser, otherExternalUser, serviceProvider)
+  - Privileged admin roles (16 built-in admin role IDs — same set as other Internal policies)
+  - Break-glass groups and policy exclusion group (`EID-SEC-U-A-CAP-CA207-Exclude`)
+
+### Applications
+- **Scope**: All Applications
+- **Client App Types**: All
+
+### Locations
+- Not configured (applies from any network)
+
+### Devices
+- Not configured
+
+---
+
+## Grant Controls
+
+| Control | Setting |
+|---------|---------|
+| **Operator** | OR |
+| **Grant Type** | Authentication Strength — Passwordless MFA |
+| **Auth Strength ID** | `00000000-0000-0000-0000-000000000003` (built-in Passwordless authentication strength) |
+
+**Note**: This policy uses an Authentication Strength control (not `builtInControls = "mfa"`). The Passwordless authentication strength requires methods such as Windows Hello for Business, FIDO2 security keys, or Microsoft Authenticator passwordless phone sign-in. Password-based MFA methods do not satisfy this strength requirement.
+
+---
+
 ## Passwordless Methods Supported
 - Windows Hello for Business
 - FIDO2 security keys
@@ -62,3 +95,4 @@ Passwordless methods (Windows Hello, FIDO2, Authenticator) cannot be phished or 
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
 | 1.1 | 2026-03-27 | Fixed display name to match PS1 script |
+| 1.2 | 2026-06-18 | Added Policy Conditions and Grant Controls sections; documented authentication strength control and ID |
