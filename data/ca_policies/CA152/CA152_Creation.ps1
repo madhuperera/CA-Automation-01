@@ -42,7 +42,33 @@ $IncludedApplications = "All"
 
 # Grant Controls
 $Operator = "OR"
-$AuthStrengthId = "00000000-0000-0000-0000-000000000004"
+$AuthStrengthDefinition = Import-PowerShellDataFile -Path (Join-Path $PSScriptRoot "..\..\auth_strengths\AS02.psd1")
+$AuthStrengthName = $AuthStrengthDefinition.DisplayName
+$FallbackAuthStrengthId = "00000000-0000-0000-0000-000000000004"  # Built-in: Phishing-resistant MFA
+
+$AuthStrengthId    = $null
+$RetryTimeoutSecs  = 120
+$RetryIntervalSecs = 10
+$Stopwatch         = [System.Diagnostics.Stopwatch]::StartNew()
+
+while ($Stopwatch.Elapsed.TotalSeconds -lt $RetryTimeoutSecs)
+{
+    $AuthStrengthId = Get-MgPolicyAuthenticationStrengthPolicy -Filter "displayName eq '$AuthStrengthName'" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id
+    if ($AuthStrengthId)
+    {
+        Write-Host "Authentication Strength '$AuthStrengthName' resolved to $AuthStrengthId."
+        break
+    }
+    Write-Host "Authentication Strength '$AuthStrengthName' not yet available. Retrying in $RetryIntervalSecs seconds... ($([int]$Stopwatch.Elapsed.TotalSeconds)s elapsed)"
+    Start-Sleep -Seconds $RetryIntervalSecs
+}
+$Stopwatch.Stop()
+
+if (-not $AuthStrengthId)
+{
+    Write-Warning "Authentication Strength '$AuthStrengthName' not found after $RetryTimeoutSecs seconds. Falling back to built-in Phishing-resistant MFA ($FallbackAuthStrengthId)."
+    $AuthStrengthId = $FallbackAuthStrengthId
+}
 
 # Session Contols
 

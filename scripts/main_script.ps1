@@ -3,7 +3,7 @@ param(
     [string]$Mode = "Advanced"
 )
 
-$RequireScopes = 'Policy.Read.All','Policy.ReadWrite.ConditionalAccess','Group.ReadWrite.All','Application.Read.All'
+$RequireScopes = 'Policy.Read.All','Policy.ReadWrite.ConditionalAccess','Group.ReadWrite.All','Application.Read.All','AuthenticationContext.ReadWrite.All'
 Disconnect-MgGraph -ErrorAction SilentlyContinue
 Connect-MgGraph -Scopes $RequireScopes
 
@@ -42,6 +42,16 @@ else
 # IMPORTANT: Use dot-sourcing (.) not the call operator (&) for child scripts.
 # Dot-sourcing runs them in this script's scope so they can read $script:PolicyFilter.
 # Using & would create a new scope where $script:PolicyFilter is $null, ignoring the Core/Advanced filter.
+
+Write-Output "Creating Authentication Strengths ...."
+$createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_auth_strengths.ps1"
+. $createLocationsScript
+$createLocationsScript = $null
+
+Write-Output "Creating Authentication Contexts ...."
+$createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_auth_contexts.ps1"
+. $createLocationsScript
+$createLocationsScript = $null
 
 Write-Output "Creating Known Locations ...."
 $createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_known_locations.ps1"
