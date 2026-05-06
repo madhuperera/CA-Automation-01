@@ -34,7 +34,7 @@ This policy complements CA001 by blocking access from countries outside an appro
   - `EID-SEC-U-A-CAP-CA218-Exclude` (employees traveling to excluded countries)
   - Break-glass admin groups
   - Guests/external users (by design)
-  - Global Administrator role (policy allows this role)
+  - Privileged admin roles (16 built-in admin role IDs — same set as other Internal policies, including Global Administrator, Exchange Administrator, SharePoint Administrator, and other service-specific admin roles)
 
 ### Applications
 - **Scope**: All Applications
@@ -248,3 +248,4 @@ Before enforcing this policy, verify:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial template documentation |
+| 1.1 | 2026-06-18 | Corrected Users exclusions: all 16 privileged admin roles are excluded, not only Global Administrator |
