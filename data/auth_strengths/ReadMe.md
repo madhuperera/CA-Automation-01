@@ -12,7 +12,7 @@ Each strength is defined as a `.psd1` file in this folder and deployed by [`scri
 
 ```powershell
 @{
-    DisplayName         = "AS01-Phishing-Resistant-MFA"   # Required. Unique in tenant. Acts as the upsert key.
+    DisplayName         = "AS{nn}-Your-Strength-Name"     # Required. Unique in tenant. Acts as the upsert key.
     Description         = "Requires ..."                  # Optional. Free-form text.
     AllowedCombinations = @(                              # Required. One or more authenticationMethodModes values.
         "fido2"
@@ -38,23 +38,25 @@ Combinations may also be expressed as multi-method strings (e.g. `"password,micr
 
 ## Catalogue
 
-### AS01 - Phishing-Resistant MFA
+### AS01 - Emergency Break Glass 01
 
-| Attribute    | Value                                                                                  |
-| ------------ | -------------------------------------------------------------------------------------- |
-| **Display**  | AS01-Phishing-Resistant-MFA                                                            |
-| **Methods**  | `fido2`, `windowsHelloForBusiness`, `x509CertificateMultiFactor`                       |
-| **Use For**  | Privileged accounts, admin role activation, sensitive data access.                     |
+| Attribute       | Value                                                                              |
+| --------------- | ---------------------------------------------------------------------------------- |
+| **Display**     | AS01-EBG-01                                                                        |
+| **Description** | Authentication Strength Requirement for Emergency Break Glass 01                   |
+| **Methods**     | `fido2`                                                                            |
+| **Use For**     | Break-glass account 1. Requires a FIDO2 security key for emergency tenant access.  |
 
 ---
 
-### AS02 - Passwordless MFA
+### AS02 - Emergency Break Glass 02
 
-| Attribute    | Value                                                                                  |
-| ------------ | -------------------------------------------------------------------------------------- |
-| **Display**  | AS02-Passwordless-MFA                                                                  |
-| **Methods**  | `fido2`, `windowsHelloForBusiness`, `microsoftAuthenticatorPush`                       |
-| **Use For**  | Standard user MFA where passwords should not be accepted as the first factor.          |
+| Attribute       | Value                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| **Display**     | AS02-EBG-02                                                                                 |
+| **Description** | Authentication Strength Requirement for Emergency Break Glass 02                            |
+| **Methods**     | `password,softwareOath`                                                                     |
+| **Use For**     | Break-glass account 2. Requires a password combined with a software OATH (TOTP) token.      |
 
 ---
 
