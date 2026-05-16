@@ -13,7 +13,7 @@
 
 ## Business Objective
 
-Enforce strong authentication (passwordless or phishing-resistant MFA) for the second emergency break-glass account, providing a redundant emergency access path while maintaining high security.
+Enforce a custom authentication strength for the second emergency break-glass account, providing a redundant emergency access path with a different authentication method from break-glass account 1.
 
 ## Security Rationale
 
@@ -22,7 +22,7 @@ Enforce strong authentication (passwordless or phishing-resistant MFA) for the s
 - **Control Type**: Preventive (enforces strong authentication)
 - **Risk Level**: Critical - Break-glass is last resort access
 
-This policy is identical to CA151 but applies to the second break-glass account. Having TWO break-glass accounts ensures that compromise of one doesn't completely eliminate emergency access.
+This policy applies to the second break-glass account. Unlike CA151 (which uses `AS01-EBG-01` requiring FIDO2), this policy uses `AS02-EBG-02` (password + software OATH token). Using different authentication requirements for each break-glass account ensures that a loss of one authentication method does not simultaneously lock out both accounts.
 
 ---
 
@@ -52,18 +52,20 @@ This policy is identical to CA151 but applies to the second break-glass account.
 | Control | Setting |
 |---------|---------|
 | **Operator** | OR |
-| **Grant Type** | Authentication Strength (Passwordless/Phishing-Resistant) |
+| **Grant Type** | Authentication Strength (`AS02-EBG-02`) |
 
-**Accepted Methods**:
-- Windows Hello for Business
-- FIDO2 security keys
-- Microsoft Authenticator (passwordless phone sign-in)
+**Accepted Methods** (per `data/auth_strengths/AS02.psd1`):
+- Password combined with a software OATH token (TOTP)
 
 **NOT Accepted**:
-- Password only
-- MFA with TOTP codes
+- Password only (without a software OATH token)
+- FIDO2 security keys (not in AS02-EBG-02 combination)
+- Windows Hello for Business
+- Microsoft Authenticator (passwordless phone sign-in)
 - SMS codes
 - Phone approvals
+
+> **Deployment note**: If `AS02-EBG-02` cannot be resolved at deployment time, the script falls back to the built-in Phishing-resistant MFA strength, which accepts FIDO2, Windows Hello for Business, and certificate-based authentication.
 
 ---
 
@@ -83,11 +85,11 @@ This policy is identical to CA151 but applies to the second break-glass account.
 5. Identify what authentication methods are currently used
 
 ### Phase 2: Validation
-1. Review audit data: Is strong auth working for break-glass account?
-2. Verify account has Windows Hello, FIDO2 key, or Authenticator passwordless registered
-3. Test authentication with strong method
+1. Review audit data: Is the custom strength working for break-glass account 2?
+2. Verify account has a software OATH token registered (required by `AS02-EBG-02`)
+3. Test authentication with password + TOTP code
 4. Ensure account is excluded from all other CA policies (except this one)
-5. Document the strong auth method registered
+5. Document the registered auth method and TOTP app details
 
 ### Phase 3: Enforcement
 1. Change policy state to `enabled`
@@ -110,18 +112,19 @@ This policy is identical to CA151 but applies to the second break-glass account.
 - **Annually**: Rotate strong auth credentials (if FIDO2 key, consider backup key)
 
 ### User Impact
-- Break-glass account cannot sign in with password alone
-- Must use Windows Hello, FIDO2 key, or Authenticator passwordless
-- Setup: 10-20 minutes for initial strong auth registration
+- Break-glass account 2 requires both a password and a software OATH token (TOTP) to sign in (per `AS02-EBG-02`)
+- This differs from account 1 (CA151), which requires a FIDO2 security key
+- Setup: Register a software OATH token (e.g., Microsoft Authenticator or compatible TOTP app) on the account before enforcement
 
 ### Redundancy Strategy
-**Why TWO break-glass accounts?**
-- If account 1 is compromised: Use account 2 to revoke account 1's access
-- If account 1 loses authentication method: Use account 2 to re-register account 1's auth
-- If account 2 is compromised: Use account 1 to revoke account 2's access
-- If both passwords stolen: Both still protected by strong auth requirement
+**Why TWO break-glass accounts with different authentication requirements?**
+- Account 1 (CA151) requires a FIDO2 security key (`AS01-EBG-01`)
+- Account 2 (CA152) requires password + software OATH token (`AS02-EBG-02`)
+- If account 1's FIDO2 key is lost: Use account 2 to regain access
+- If account 2's TOTP app or password is compromised: Account 1 still requires a FIDO2 key (unaffected)
+- Separate authentication methods reduce shared-failure risk across both accounts
 
-**DO NOT USE BOTH ACCOUNTS FOR SAME PERSON** - Different individuals should hold each account.
+**DO NOT USE BOTH ACCOUNTS FOR THE SAME PERSON** - Different individuals should hold each account.
 
 ---
 
@@ -134,9 +137,8 @@ This policy is identical to CA151 but applies to the second break-glass account.
 | `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1` | The other emergency account (excluded) | 1 user |
 
 ### Hardware/Methods
-- **Windows Hello**: Built into Windows 10/11 (if device supports biometric)
-- **FIDO2 Key**: Physical security key ($20-50) 
-- **Authenticator**: Microsoft Authenticator app on phone
+- **Software OATH Token**: A TOTP-compatible authenticator app (e.g., Microsoft Authenticator configured as software OATH token). Required by `AS02-EBG-02` in combination with the account password.
+- **Password**: The break-glass account password — must be long, random, and stored securely (e.g., sealed envelope in a physically secured location).
 
 ---
 
@@ -144,13 +146,12 @@ This policy is identical to CA151 but applies to the second break-glass account.
 
 Before enforcing this policy, verify:
 
-- [ ] Break-glass account 2 has strong auth method registered
-- [ ] Break-glass account 2 can sign in using strong auth method
+- [ ] Break-glass account 2 has a software OATH token registered
+- [ ] Break-glass account 2 can sign in using password + TOTP code
 - [ ] Account can access Exchange Online, SharePoint, Teams, Azure (test all critical services)
-- [ ] Strong auth method is stored securely
+- [ ] Account password is stored securely (sealed envelope or equivalent)
 - [ ] Different person holds account 2 than account 1
-- [ ] Both FIDO2 keys (or auth methods) are documented
-- [ ] Backup strong auth method exists if possible
+- [ ] TOTP app and password storage details are documented
 - [ ] Account 1 is properly excluded from this policy
 - [ ] Policy is set to `enabled` permanently
 
@@ -160,14 +161,13 @@ Before enforcing this policy, verify:
 
 ### Issue: Break-glass account 2 cannot sign in after policy enforcement
 **Diagnosis**: 
-- Strong auth method not registered
-- FIDO2 key lost or not functioning
-- Windows Hello enrollment failed
+- Software OATH token not registered on the account
+- TOTP app unavailable or misconfigured
 
 **Resolution** (CRITICAL):
 1. **Use break-glass account 1** to regain access
-2. Register strong auth method on account 2
-3. Test authentication with strong method
+2. Register a software OATH token on account 2
+3. Test authentication with password + TOTP
 4. Ensure CA152 policy is enforced
 5. Do NOT leave both accounts inaccessible
 
@@ -248,15 +248,14 @@ Before enforcing this policy, verify:
 
 ## CRITICAL REMINDER
 
-**TWO break-glass accounts provide redundancy against loss of access. Treat both with highest priority:**
+**Two break-glass accounts with different authentication requirements provide resilience against loss of access. Treat both with the highest priority:**
 
-1. **Test BOTH quarterly** - Actually sign in and verify both can access tenant
-2. **Secure both authentication methods** - FIDO2 keys must be in different secure locations
+1. **Test BOTH quarterly** - Actually sign in and verify both accounts can access the tenant
+2. **Account 1 uses a FIDO2 key; Account 2 uses password + TOTP** - These are intentionally different
 3. **Different people hold each** - Do not have one person with both accounts
-4. **Document thoroughly** - Who holds each account? Where are the keys? Succession plan if person leaves?
+4. **Document thoroughly** - Who holds each account? Where are credentials stored? Succession plan?
 5. **Never lose both** - Losing both accounts means complete loss of tenant control and requires emergency Microsoft intervention
-6. **Have backup methods** - More than one way for each account to authenticate
-7. **Test emergency access plan** - Ensure procedures to use break-glass accounts are documented and tested
+6. **Test emergency access plan** - Ensure procedures to use break-glass accounts are documented and tested
 
 ---
 
@@ -267,7 +266,7 @@ If both break-glass accounts become inaccessible:
 1. You have **NO administrative access** to your tenant
 2. You will need to contact **Microsoft Support**
 3. Recovery will require proving:
-   - Organization ownership
+   - Organisation ownership
    - Identity verification
    - Business case for access recovery
 4. **Recovery time**: 24-72 hours (not immediate)

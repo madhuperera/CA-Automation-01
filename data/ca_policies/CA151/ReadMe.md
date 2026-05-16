@@ -13,7 +13,7 @@
 
 ## Business Objective
 
-Enforce strong authentication (passwordless or phishing-resistant MFA) for the first emergency break-glass account, ensuring that emergency access is secure and auditable.
+Enforce strong authentication using a custom authentication strength for the first emergency break-glass account, ensuring that emergency access is secure and auditable.
 
 ## Security Rationale
 
@@ -52,18 +52,20 @@ Break-glass accounts are intentionally excluded from other CA policies to guaran
 | Control | Setting |
 |---------|---------|
 | **Operator** | OR |
-| **Grant Type** | Authentication Strength (Passwordless/Phishing-Resistant) |
+| **Grant Type** | Authentication Strength (`AS01-EBG-01`) |
 
-**Accepted Methods**:
-- Windows Hello for Business
+**Accepted Methods** (per `data/auth_strengths/AS01.psd1`):
 - FIDO2 security keys
-- Microsoft Authenticator (passwordless phone sign-in)
 
 **NOT Accepted**:
 - Password only
+- Windows Hello for Business
+- Microsoft Authenticator (any method)
 - MFA with TOTP codes
 - SMS codes
 - Phone approvals
+
+> **Deployment note**: If `AS01-EBG-01` cannot be resolved at deployment time, the script falls back to the built-in Phishing-resistant MFA strength, which accepts FIDO2, Windows Hello for Business, and certificate-based authentication.
 
 ---
 
@@ -84,10 +86,10 @@ Break-glass accounts are intentionally excluded from other CA policies to guaran
 
 ### Phase 2: Validation
 1. Review audit data: Is strong auth working for break-glass account?
-2. Verify account has Windows Hello, FIDO2 key, or Authenticator passwordless registered
-3. Test authentication with strong method
+2. Verify account has a FIDO2 security key registered (required by `AS01-EBG-01`)
+3. Test authentication with FIDO2 key
 4. Ensure account is excluded from all other CA policies (except this one)
-5. Document the strong auth method registered
+5. Document the registered auth method and where the key is stored
 
 ### Phase 3: Enforcement
 1. Change policy state to `enabled`
@@ -110,9 +112,8 @@ Break-glass accounts are intentionally excluded from other CA policies to guaran
 - **Annually**: Rotate strong auth credentials (if FIDO2 key, consider backup key)
 
 ### User Impact
-- Break-glass account cannot sign in with password alone
-- Must use Windows Hello, FIDO2 key, or Authenticator passwordless
-- Setup: 10-20 minutes for initial strong auth registration
+- Break-glass account cannot sign in without a FIDO2 security key (per `AS01-EBG-01`)
+- Setup: Provision and register a FIDO2 key for the account before enforcement
 
 ### Critical Note
 **DO NOT LOCK OUT YOUR BREAK-GLASS ACCOUNT** - This is your emergency access if all other admins are compromised. Ensure strong auth method is:
@@ -132,9 +133,7 @@ Break-glass accounts are intentionally excluded from other CA policies to guaran
 | `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2` | The other emergency account (excluded) | 1 user |
 
 ### Hardware/Methods
-- **Windows Hello**: Built into Windows 10/11 (if device supports biometric)
-- **FIDO2 Key**: Physical security key ($20-50)
-- **Authenticator**: Microsoft Authenticator app on phone
+- **FIDO2 Key**: Physical security key required by `AS01-EBG-01`. Store in a secure, documented location with a backup key if possible.
 
 ---
 
@@ -142,12 +141,11 @@ Break-glass accounts are intentionally excluded from other CA policies to guaran
 
 Before enforcing this policy, verify:
 
-- [ ] Break-glass account has strong auth method registered
-- [ ] Break-glass account can sign in using strong auth method
+- [ ] Break-glass account has a FIDO2 security key registered
+- [ ] Break-glass account can sign in using the FIDO2 key
 - [ ] Account can access Exchange Online, SharePoint, Teams, Azure (test all critical services)
-- [ ] FIDO2 key is stored securely if used
-- [ ] Strong auth method is documented (where it's stored, how to use it)
-- [ ] Backup strong auth method exists if possible (e.g., backup FIDO2 key or Windows Hello + Authenticator)
+- [ ] FIDO2 key is stored securely and its location is documented
+- [ ] A backup FIDO2 key is provisioned and registered if possible
 - [ ] The other break-glass account (CA152) is properly excluded
 - [ ] Policy is set to `enabled` permanently
 
@@ -157,29 +155,27 @@ Before enforcing this policy, verify:
 
 ### Issue: Break-glass account cannot sign in after policy enforcement
 **Diagnosis**: 
-- Strong auth method not registered
-- FIDO2 key lost or not functioning
-- Windows Hello enrollment failed
+- FIDO2 key not registered on the account
+- FIDO2 key lost, damaged, or not functioning
 
 **Resolution** (CRITICAL):
 1. **Temporarily disable CA151 policy** to regain access
-2. Register strong auth method on break-glass account
-3. Test authentication with strong method
+2. Register a new FIDO2 key on the break-glass account
+3. Test authentication with the new key
 4. Re-enable policy
 5. Do NOT leave policy disabled long-term
 
-### Issue: Break-glass account strong auth method lost/unavailable
+### Issue: FIDO2 key lost or unavailable
 **Diagnosis**: 
-- FIDO2 key lost or destroyed
-- Biometric device no longer available
-- Authenticator uninstalled from phone
+- Key lost or physically destroyed
+- Key not available at sign-in location
 
 **Resolution**:
-1. If this is emergency: Temporarily disable CA151 to access tenant
-2. Register new strong auth method immediately
-3. Document where backup method is stored
+1. If this is an emergency: Temporarily disable CA151 to access tenant
+2. Register a new FIDO2 key immediately
+3. Document where the backup key is stored
 4. Re-enable CA151
-5. Procure backup FIDO2 key
+5. Procure a second backup FIDO2 key
 
 ### Issue: Need to temporarily access with weaker authentication
 **Diagnosis**: 
@@ -244,10 +240,10 @@ Before enforcing this policy, verify:
 
 ## CRITICAL REMINDER
 
-**Break-glass accounts are your organization's "nuclear option" for access if all other admins are compromised.** Treat CA151 and CA152 with highest priority:
+**Break-glass accounts are your organisation's emergency access path. Treat CA151 with the highest priority:**
 
-1. **Test quarterly** - Actually sign in and verify access works
-2. **Secure the authentication method** - FIDO2 key must be physically secure
+1. **Test quarterly** - Actually sign in and verify the FIDO2 key works
+2. **Secure the FIDO2 key** - Store in a physically secure, documented location
 3. **Document everything** - Where is the key? Who has it? How do you use it?
 4. **Never lock it out** - Losing both break-glass accounts means complete loss of tenant control
-5. **Keep backup methods** - Have more than one way to authenticate break-glass accounts
+5. **Keep a backup key** - Provision and register a second FIDO2 key where possible

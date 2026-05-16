@@ -106,6 +106,14 @@ main_script.ps1
 Connect to Microsoft Graph
       │
       ▼
+Create authentication strengths
+data/auth_strengths/*.psd1
+      │
+      ▼
+Create authentication contexts
+data/auth_contexts/*.psd1
+      │
+      ▼
 Create named locations
 data/known_locations/*.psd1
       │
@@ -126,9 +134,11 @@ data/ca_policies/{CA###}/*.ps1
 
 | Step | Reason |
 |---|---|
-| Named locations first | Policies may reference country or IP-based locations |
-| Break-glass groups second | Emergency access exclusions must exist before policies are deployed |
-| Exclusion groups third | Each policy needs a dedicated exclusion group |
+| Authentication strengths first | Break-glass account policies reference custom strength IDs that must exist before policies are deployed |
+| Authentication contexts second | Policies that enforce step-up authentication reference context IDs that must exist before policies are deployed |
+| Named locations third | Policies may reference country or IP-based locations |
+| Break-glass groups fourth | Emergency access exclusions must exist before policies are deployed |
+| Exclusion groups fifth | Each policy needs a dedicated exclusion group |
 | Policies last | Policies depend on all supporting objects being available |
 
 ---
@@ -148,6 +158,16 @@ CA-Automation-01/
 │   │   ├── ...
 │   │   └── CA307/
 │   │
+│   ├── auth_contexts/
+│   │   ├── C01.psd1
+│   │   ├── C02.psd1
+│   │   ├── C03.psd1
+│   │   └── C04.psd1
+│   │
+│   ├── auth_strengths/
+│   │   ├── AS01.psd1
+│   │   └── AS02.psd1
+│   │
 │   ├── known_locations/
 │   │   ├── CL001.psd1
 │   │   ├── CL002.psd1
@@ -159,6 +179,8 @@ CA-Automation-01/
 │
 ├── scripts/
 │   ├── create_admin_units.ps1
+│   ├── create_auth_contexts.ps1
+│   ├── create_auth_strengths.ps1
 │   ├── create_break_glass_groups.ps1
 │   ├── create_ca_policies.ps1
 │   ├── create_groups.ps1
@@ -312,6 +334,7 @@ The signed-in account must be able to consent to and use the following Microsoft
 | Policy.ReadWrite.ConditionalAccess | Create and update Conditional Access policies |
 | Group.ReadWrite.All | Create and update security groups |
 | Application.Read.All | Read application and service principal references |
+| AuthenticationContext.ReadWrite.All | Create and update authentication context class references |
 
 ---
 
@@ -325,6 +348,14 @@ The signed-in account must be able to consent to and use the following Microsoft
   <tr>
     <td><code>main_script.ps1</code></td>
     <td>Entry point. Connects to Microsoft Graph, confirms tenant context, and executes sub-scripts in dependency order.</td>
+  </tr>
+  <tr>
+    <td><code>create_auth_strengths.ps1</code></td>
+    <td>Discovers <code>.psd1</code> files under <code>data/auth_strengths/</code> and creates or updates custom authentication strength policies.</td>
+  </tr>
+  <tr>
+    <td><code>create_auth_contexts.ps1</code></td>
+    <td>Discovers <code>.psd1</code> files under <code>data/auth_contexts/</code> and creates or updates authentication context class references.</td>
   </tr>
   <tr>
     <td><code>create_known_locations.ps1</code></td>
