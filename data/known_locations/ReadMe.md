@@ -28,6 +28,8 @@ Named locations define geographic and network-based access conditions used by Co
 
 **Purpose**: Defines trusted countries for B2B collaboration guests. Only New Zealand allowed.
 
+**Used By**: CA301 (block B2B guests outside trusted countries), CA302 (require MFA for B2B guests — exempts guests in trusted countries)
+
 ---
 
 ## CL003 - Service Provider Users Trusted Countries
@@ -39,6 +41,8 @@ Named locations define geographic and network-based access conditions used by Co
 | **Include Unknown** | No |
 
 **Purpose**: Defines trusted countries for service providers and vendors. Only New Zealand allowed.
+
+**Used By**: CA303 (block service provider users outside trusted countries)
 
 ---
 
@@ -70,6 +74,8 @@ Named locations define geographic and network-based access conditions used by Co
 **:warning: IMPORTANT:** Replace **`CL005`** and **`1.1.1.1/32`** with your own internal trusted IP ranges!
 
 **Purpose**: Corporate network IP ranges and VPN exit points. Marks trusted internal network locations.
+
+**Used By**: CA202 (require MFA for security info registration — exempts office IPs), CA209 (require MFA for device registration — exempts office IPs)
 
 ---
 
@@ -103,3 +109,4 @@ Named locations define geographic and network-based access conditions used by Co
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
+| 1.1 | 2026-07-11 | Added Used By references for CL002 (CA301, CA302), CL003 (CA303), and CL005 (CA202, CA209) |
