@@ -470,7 +470,7 @@ else
 | CA102 | `CA102-AllApps:RequireMFA-For:Admins-When:AnyNetwork` | Requires MFA for all admin role holders | [ReadMe](data/ca_policies/CA102/ReadMe.md) |
 | CA103 | `CA103-AllApps:PhishingResistantMFA-For:Admins-When:AnyNetwork` | Requires phishing-resistant MFA for admins | [ReadMe](data/ca_policies/CA103/ReadMe.md) |
 | CA104 | `CA104-AllApps:SessionFrequency-For:Admins-When:AnyNetwork` | Enforces 4-hour sign-in frequency for admin sessions | [ReadMe](data/ca_policies/CA104/ReadMe.md) |
-| CA105 | `CA105-AllApps:Block-For:Admins-When:LegacyProtocols` | Blocks legacy authentication protocols for admins | [ReadMe](data/ca_policies/CA105/README.md) |
+| CA105 | `CA105-AllApps:Block-For:Admins-When:LegacyProtocols` | Blocks legacy authentication protocols for admins | [ReadMe](data/ca_policies/CA105/ReadMe.md) |
 | CA151 | `CA151-AllApps:AuthStrength-For:EmergencyBreakGlassAccount1-When:AnyNetwork` | Enforces authentication strength for break-glass account 1 | [ReadMe](data/ca_policies/CA151/ReadMe.md) |
 | CA152 | `CA152-AllApps:AuthStrength-For:EmergencyBreakGlassAccount2-When:AnyNetwork` | Enforces authentication strength for break-glass account 2 | [ReadMe](data/ca_policies/CA152/ReadMe.md) |
 
