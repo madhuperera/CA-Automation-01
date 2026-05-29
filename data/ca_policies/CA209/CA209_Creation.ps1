@@ -10,10 +10,6 @@ $ExcludedGroups =
     "EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2"
 )
 $IncludedUserActions = "urn:user:registerdevice"
-$ExcludedLocations =
-@(
-    "CL005-IP-A-AllApps-InternalUsers-TrustedLocations"
-)
 $ExcludedGuestTypes = "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
 $ExcludedRoles = 
 @(
@@ -45,16 +41,6 @@ foreach ($group in $ExcludedGroups)
     }
 }
 
-$ExcludedLocationIds = @()
-foreach ($location in $ExcludedLocations)
-{
-    $locationId = Get-MgIdentityConditionalAccessNamedLocation -Filter "displayName eq '$($location)'" | Select-Object -ExpandProperty Id
-    if ($locationId -ne $null)
-    {
-        $ExcludedLocationIds += $locationId
-    }
-}
-
 $params = 
 @{
 	displayName = $DisplayName
@@ -68,7 +54,6 @@ $params =
                 }
                 locations =
                 @{
-                    excludeLocations = $ExcludedLocationIds
                     includeLocations = "All"
                 }
                 users = 
