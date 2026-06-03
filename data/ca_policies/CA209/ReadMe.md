@@ -1,4 +1,4 @@
-# CA209 - Require MFA for Device Enrollment Outside Office
+# CA209 - Require MFA for Device Enrollment (All Locations)
 
 ## Policy Overview
 
@@ -13,7 +13,7 @@
 
 ## Business Objective
 
-Require internal users to complete MFA when registering (enrolling) a device from outside trusted office locations. This prevents unauthorized device enrollment from untrusted networks.
+Require internal users to complete MFA when registering (enrolling) a device. The display name indicates intent to scope this to outside-office scenarios, but the creation script does not configure a location exclusion — MFA is therefore required for device enrollment from any location.
 
 ## Security Rationale
 
@@ -38,7 +38,9 @@ Require internal users to complete MFA when registering (enrolling) a device fro
 
 ### Locations
 - **Included**: All locations
-- **Excluded**: `CL005-IP-A-AllApps-InternalUsers-TrustedLocations` (trusted office locations)
+- **Excluded**: Not configured — the script does not define any location exclusion
+
+**Note**: Despite the display name containing `OutsideOfOffice`, the creation script (`CA209_Creation.ps1`) only sets `includeLocations = "All"` with no `excludeLocations` block. As scripted, MFA is required for device registration from all locations, including trusted office locations.
 
 ---
 
@@ -52,8 +54,7 @@ Require internal users to complete MFA when registering (enrolling) a device fro
 ---
 
 ## User Impact
-- Users enrolling devices from trusted office locations are unaffected
-- Users enrolling devices from outside the office must complete MFA
+- MFA is required for device registration from any network location (no office exclusion is configured in the script)
 - Admin roles are excluded (handled by separate admin policies)
 - Guest users are excluded
 
@@ -61,16 +62,13 @@ Require internal users to complete MFA when registering (enrolling) a device fro
 
 ## Dependent Resources
 
-| Resource | Name | Purpose |
-|----------|------|---------|
-| Named Location | `CL005-IP-A-AllApps-InternalUsers-TrustedLocations` | Trusted office IP ranges |
+None. This policy does not reference any named location — no location exclusion is configured in the creation script.
 
 ---
 
 ## Testing Checklist
 
-- [ ] Users at office locations can register devices without MFA prompt
-- [ ] Users outside office are prompted for MFA when registering devices
+- [ ] Internal users are prompted for MFA when registering devices (from any location)
 - [ ] Admin roles are excluded
 - [ ] Guest users are excluded
 - [ ] Break-glass accounts excluded and functional
@@ -90,3 +88,4 @@ Require internal users to complete MFA when registering (enrolling) a device fro
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
 | 1.1 | 2026-03-27 | Corrected: policy is for device enrollment MFA outside office (not device compliance for all users) |
+| 1.2 | 2026-06-18 | Corrected: no location exclusion is configured in the creation script; policy applies from all locations |
