@@ -75,7 +75,9 @@ Named locations define geographic and network-based access conditions used by Co
 
 **Purpose**: Corporate network IP ranges and VPN exit points. Marks trusted internal network locations.
 
-**Used By**: CA202 (require MFA for security info registration — exempts office IPs), CA209 (require MFA for device registration — exempts office IPs)
+**Used By**: CA202 (require MFA for security info registration — exempts office IPs)
+
+**Note**: CA209 (device enrollment MFA) references office location in its display name but does not configure a location exclusion in its creation script. CL005 is not referenced by CA209.
 
 ---
 
