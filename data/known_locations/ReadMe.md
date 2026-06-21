@@ -111,4 +111,4 @@ Named locations define geographic and network-based access conditions used by Co
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
-| 1.1 | 2026-07-11 | Added Used By references for CL002 (CA301, CA302), CL003 (CA303), and CL005 (CA202, CA209) |
+| 1.1 | 2026-07-11 | Added Used By references for CL002 (CA301, CA302), CL003 (CA303), and CL005 (CA202) |
