@@ -483,14 +483,14 @@ else
 |---|---|---|---|
 | CA200 | `CA200-O365:RequireAppProtectionPolicy-For:AllUsers-When:OnMobileDevices` | Requires app protection policy for Office 365 on mobile | [ReadMe](data/ca_policies/CA200/ReadMe.md) |
 | CA201 | `CA201-AllApps:Block-For:Internals-When:UnsupportedDeviceType` | Blocks unsupported device platforms | [ReadMe](data/ca_policies/CA201/ReadMe.md) |
-| CA202 | `CA202-SecurityInformation:RequireMFAorCompliant-For:Internals-When:OutsideOfOffice` | Requires MFA or compliant device for security information registration outside office | [ReadMe](data/ca_policies/CA202/ReadMe.md) |
+| CA202 | `CA202-SecurityInformation:RequireMFAorCompliant-For:Internals-When:OutsideOfOffice` | Requires MFA for security information registration from outside trusted office locations and non-compliant devices | [ReadMe](data/ca_policies/CA202/ReadMe.md) |
 | CA203 | `CA203-AllApps:SessionFrequency-For:Internals-When:OnUnmanagedDevices` | Enforces sign-in frequency on unmanaged devices | [ReadMe](data/ca_policies/CA203/ReadMe.md) |
 | CA204 | `CA204-AllApps:ManagedDevice-For:Internals-When:AnyNetwork` | Blocks unmanaged devices | [ReadMe](data/ca_policies/CA204/ReadMe.md) |
 | CA205 | `CA205-AllApps:Block-For:Internals-When:LegacyProtocols` | Blocks legacy authentication protocols | [ReadMe](data/ca_policies/CA205/ReadMe.md) |
 | CA206 | `CA206-AllApps:RequireMFA-For:Internals-When:AnyNetwork` | Requires MFA for internal users | [ReadMe](data/ca_policies/CA206/ReadMe.md) |
 | CA207 | `CA207-AllApps:RequirePasswordless-For:Internals-When:AnyNetwork` | Requires passwordless authentication | [ReadMe](data/ca_policies/CA207/ReadMe.md) |
 | CA208 | `CA208-O365:RequireManagedDevice-For:Internals-When:OnWindowsDevices` | Blocks non-company Windows devices from Office 365 | [ReadMe](data/ca_policies/CA208/ReadMe.md) |
-| CA209 | `CA209-DeviceEnrollment:RequireMFA-For:Internals-When:OutsideOfOffice` | Requires MFA for Intune device enrolment outside office | [ReadMe](data/ca_policies/CA209/ReadMe.md) |
+| CA209 | `CA209-DeviceEnrollment:RequireMFA-For:Internals-When:OutsideOfOffice` | Requires MFA for device registration from all network locations | [ReadMe](data/ca_policies/CA209/ReadMe.md) |
 | CA210 | `CA210-AllApps:RequireMFA-For:Internals-When:RiskySignIn:Low` | Requires MFA for low sign-in risk | [ReadMe](data/ca_policies/CA210/ReadMe.md) |
 | CA211 | `CA211-AllApps:RequireMFA+EverySignIn-For:Internals-When:RiskySignIn:Medium` | Requires MFA and every-time reauthentication for medium sign-in risk | [ReadMe](data/ca_policies/CA211/ReadMe.md) |
 | CA212 | `CA212-AllApps:Block-For:Internals-When:RiskySignIn:High` | Blocks high-risk sign-ins | [ReadMe](data/ca_policies/CA212/ReadMe.md) |
