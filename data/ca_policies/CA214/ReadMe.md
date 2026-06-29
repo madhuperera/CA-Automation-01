@@ -5,6 +5,7 @@
 | Attribute | Value |
 |-----------|-------|
 | **Policy ID** | CA214 |
+| **Display Name** | CA214-AllApps:RequireMFA+EverySignIn-For:Internals-When:RiskyUser:Medium |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Risk-Based Access |
 | **Risk Signal** | User risk (`medium`) |

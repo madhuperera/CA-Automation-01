@@ -5,6 +5,7 @@
 | Attribute | Value |
 |-----------|-------|
 | **Policy ID** | CA213 |
+| **Display Name** | CA213-AllApps:RequireMFA-For:Internals-When:RiskyUser:Low |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Risk-Based Access |
 | **Risk Signal** | User risk (`low`) |

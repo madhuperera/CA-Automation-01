@@ -5,6 +5,7 @@
 | Attribute | Value |
 |-----------|-------|
 | **Policy ID** | CA215 |
+| **Display Name** | CA215-AllApps:RequireMFA+PwdReset+EverySignIn-For:Internals-When:RiskyUser:High |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Risk-Based Access |
 | **Risk Signal** | User risk (`high`) |
