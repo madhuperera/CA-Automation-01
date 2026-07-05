@@ -17,13 +17,13 @@
 
 ## Business Objective
 
-Require MFA for users assessed as low risk to reduce account takeover exposure while preserving usability.
+Require MFA for internal users assessed as low user risk so suspicious accounts receive an additional verification step before risk escalates further.
 
 ---
 
 ## Security Rationale
 
-User risk combines identity protection signals over time. Applying MFA at low user risk adds assurance before risk increases further.
+Low user risk indicates early compromise signals may already exist against the account. Requiring MFA adds a verification step while avoiding the stronger disruption used at medium and high user-risk levels.
 
 ---
 
@@ -39,20 +39,75 @@ The script validates Entra ID P2 capability by:
 
 ## Policy Conditions
 
-- Include users: `All`
-- Exclude groups: policy exclusion group + two emergency break-glass groups
-- Exclude guest/external user types
-- Exclude privileged admin roles
-- Condition: `userRiskLevels = low`
-- Grant: `mfa`
+### Users
+- **Scope**: All users
+- **Excluded**:
+  - All guest and external user types
+  - Privileged admin roles (16 built-in role IDs)
+  - `EID-SEC-U-A-CAP-CA213-Exclude`
+  - `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1`
+  - `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2`
+
+### Applications
+- **Scope**: All applications
+- **Client App Types**: All
+
+### Risk Condition
+- **User Risk Levels**: `low`
+
+### Locations and Devices
+- Not configured — this policy does not use named locations, platforms, or device filters
+
+---
+
+## Grant Controls
+
+| Control | Setting |
+|---------|---------|
+| **Operator** | OR |
+| **Grant Type** | Require MFA |
+
+---
+
+## User Impact
+
+- Internal users with normal user risk are unaffected
+- Internal users assessed as low user risk must complete MFA
+- Break-glass accounts and excluded admin roles remain outside scope
 
 ---
 
 ## Testing Checklist
 
-- [ ] Policy correctly identifies low-risk users for internal population
-- [ ] MFA challenge is applied
-- [ ] No impact on break-glass accounts
+- [ ] Entra ID P2 capability is present in the tenant
+- [ ] Low-risk users are challenged for MFA
+- [ ] Normal-risk users are unaffected
+- [ ] Admin roles are excluded
+- [ ] Guest and external user types are excluded
+- [ ] Break-glass accounts excluded and functional
+
+---
+
+## Rollout Notes
+
+- Review Identity Protection detections in report-only mode before enforcement
+- Confirm MFA registration coverage for the internal user population
+- Roll out alongside CA214 and CA215 so user-risk responses remain consistent by severity
+
+---
+
+## Operational Cautions
+
+- User risk is an Entra ID Identity Protection signal and may change over time without script changes
+- This policy applies to all cloud apps once a user is classified as low risk
+- Validate that operational teams understand the distinction between sign-in risk and user risk before enforcement
+
+---
+
+## References
+
+- **Identity Protection**: [Entra ID Identity Protection](https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection)
+- **Risk-Based Policies**: [Configure user and sign-in risk policies](https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-risk-policies)
 
 ---
 
@@ -61,3 +116,4 @@ The script validates Entra ID P2 capability by:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-02-20 | Initial documentation |
+| 1.1 | 2026-07-05 | Expanded exclusions, app scope, user impact, rollout notes, and operational cautions |
