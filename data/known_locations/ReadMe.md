@@ -28,7 +28,7 @@ Named locations define geographic and network-based access conditions used by Co
 
 **Purpose**: Defines trusted countries for B2B collaboration guests. Only New Zealand allowed.
 
-**Used By**: CA301 (block B2B guests outside trusted countries), CA302 (require MFA for B2B guests — exempts guests in trusted countries)
+**Used By**: CA301 (block B2B guests outside trusted countries), CA302 (intended trusted-country exclusion for B2B guest MFA policy; current CA302 script does not apply the exclusion due to a variable mismatch)
 
 ---
 
@@ -85,8 +85,8 @@ Named locations define geographic and network-based access conditions used by Co
 
 1. Create new `.psd1` file: `CL{nnn}.psd1`
 2. Define location using country or IP type
-3. Update `create_known_locations.ps1` to discover and create
-4. Reference in CA policy scripts as needed
+3. Run `scripts/create_known_locations.ps1` (or `scripts/main_script.ps1`) to create or update the location
+4. Reference the named location in CA policy scripts as needed
 
 ---
 
