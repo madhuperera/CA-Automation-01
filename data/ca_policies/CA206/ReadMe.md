@@ -8,18 +8,23 @@
 | **Display Name** | CA206-AllApps:RequireMFA-For:Internals-When:AnyNetwork |
 | **State** | Reporting Only (`enabledForReportingButNotEnforced`) |
 | **Category** | Authentication Security - MFA Enforcement |
+| **Applies To** | Internal users, all cloud apps, all client app types |
+| **Grant Controls** | Require MFA |
+| **Session Controls** | None |
 
 ---
 
 ## Business Objective
 
-Enforce multi-factor authentication for all internal users accessing Microsoft 365, preventing account takeover via password compromise.
+Require MFA for internal users across all cloud apps to reduce password-only sign-in risk and raise the baseline authentication standard.
+
+---
 
 ## Security Rationale
 
-- **Threat Mitigated**: Account takeover via compromised passwords
-- **Attack Scenario**: Attacker obtains user password and attempts to sign in without additional factor
-- **Control Type**: Preventive (forces second authentication factor)
+- **Threat Mitigated**: Account takeover through compromised passwords
+- **Attack Scenario**: An attacker obtains a user password and attempts to sign in without a second factor
+- **Control Type**: Preventive (requires step-up verification before access is granted)
 - **Risk Level**: High
 
 ---
@@ -27,8 +32,23 @@ Enforce multi-factor authentication for all internal users accessing Microsoft 3
 ## Policy Conditions
 
 ### Users
-- **Scope**: Internal users
-- **Excluded**: Admins, guests, break-glass accounts
+- **Scope**: All users
+- **Excluded**:
+  - All guest and external user types
+  - Privileged admin roles (16 built-in role IDs)
+  - `EID-SEC-U-A-CAP-CA206-Exclude`
+  - `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount1`
+  - `EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount2`
+
+### Applications
+- **Scope**: All applications
+- **Client App Types**: All
+
+### Locations
+- Not configured — applies from any network
+
+### Devices
+- Not configured — no device filter or platform restriction
 
 ---
 
@@ -37,29 +57,48 @@ Enforce multi-factor authentication for all internal users accessing Microsoft 3
 | Control | Setting |
 |---------|---------|
 | **Operator** | OR |
-| **Grant Type** | Multifactor Authentication |
+| **Grant Type** | Multifactor Authentication (`mfa`) |
 
 ---
 
 ## User Impact
-- All internal users must register MFA method
-- Setup: 5 minutes for authenticator app
-- Ongoing: 10-30 seconds per sign-in for MFA
+
+- Internal users must complete MFA when policies evaluate access to any cloud app
+- Admin-role users are intentionally excluded because separate admin-focused policies cover them
+- Guest and external accounts are excluded because this policy is for internal identities only
 
 ---
 
 ## Testing Checklist
 
-- [ ] Internal users can register MFA
-- [ ] MFA is working (authenticator, phone, etc.)
-- [ ] Non-MFA users have fallback options
+- [ ] Internal users are prompted for MFA
+- [ ] All cloud apps are in scope as expected
+- [ ] Admin roles are excluded
+- [ ] Guest and external user types are excluded
+- [ ] Break-glass accounts excluded and functional
+
+---
+
+## Rollout Notes
+
+- Keep the policy in report-only mode first and review sign-in logs for applications with heavy MFA impact
+- Confirm users have at least one supported MFA method registered before enforcement
+- Coordinate rollout with helpdesk teams because this policy affects broad internal access
+
+---
+
+## Operational Cautions
+
+- This policy applies to all cloud apps, not only Microsoft 365 workloads
+- Legacy applications, automation, or service scenarios that still depend on password-only sign-in may surface during report-only review
+- Validate exclusion group membership carefully before enforcement
 
 ---
 
 ## References
 
-- **Microsoft Graph API**: [Conditional Access Policies](https://learn.microsoft.com/en-us/graph/api/resources/conditionalaccesspolicy)
-- **MFA Methods**: [MFA Registration](https://learn.microsoft.com/en-us/azure/active-directory/user-help/multi-factor-authentication-end-user-first-time)
+- **Conditional Access**: [Conditional Access policy overview](https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview)
+- **MFA Registration**: [Require users to register for MFA](https://learn.microsoft.com/en-us/entra/identity/authentication/howto-mfa-userstates)
 
 ---
 
@@ -68,3 +107,4 @@ Enforce multi-factor authentication for all internal users accessing Microsoft 3
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
+| 1.1 | 2026-07-05 | Corrected app scope to all cloud apps and expanded exclusions, testing, rollout, and cautions |
