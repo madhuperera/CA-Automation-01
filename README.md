@@ -335,6 +335,7 @@ The signed-in account must be able to consent to and use the following Microsoft
 | Group.ReadWrite.All | Create and update security groups |
 | Application.Read.All | Read application and service principal references |
 | AuthenticationContext.ReadWrite.All | Create and update authentication context class references |
+| LicenseAssignment.Read.All | Read subscribed licences to verify Entra ID P2 before deploying risk-based policies |
 
 ---
 

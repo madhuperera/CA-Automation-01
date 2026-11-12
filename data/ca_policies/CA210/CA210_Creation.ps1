@@ -1,7 +1,16 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
 # Check for Entra ID P2 license
-$skus = Get-MgSubscribedSku
+# Requires the LicenseAssignment.Read.All scope (requested by main_script.ps1)
+try
+{
+    $skus = Get-MgSubscribedSku -ErrorAction Stop
+}
+catch
+{
+    Write-Warning "Could not read tenant licences, so Entra ID P2 could not be verified. Skipping this risk-based policy. Confirm the session has the LicenseAssignment.Read.All scope. Error: $($_.Exception.Message)"
+    exit
+}
 $enabledSkus = $skus | Where-Object {
     $_.CapabilityStatus -eq "Enabled" -and $_.PrepaidUnits.Enabled -gt 0
 }
