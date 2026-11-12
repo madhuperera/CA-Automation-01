@@ -3,7 +3,7 @@ param(
     [string]$Mode = "Advanced"
 )
 
-$RequireScopes = 'Policy.Read.All','Policy.ReadWrite.ConditionalAccess','Group.ReadWrite.All','Application.Read.All','AuthenticationContext.ReadWrite.All'
+$RequireScopes = 'Policy.Read.All','Policy.ReadWrite.ConditionalAccess','Group.ReadWrite.All','Application.Read.All','AuthenticationContext.ReadWrite.All','LicenseAssignment.Read.All'
 Disconnect-MgGraph -ErrorAction SilentlyContinue
 Connect-MgGraph -Scopes $RequireScopes
 
