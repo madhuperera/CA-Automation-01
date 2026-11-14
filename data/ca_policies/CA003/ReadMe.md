@@ -132,9 +132,9 @@ This policy blocks all users except those with administrative roles from accessi
 
 ### Rollback Plan
 If deployment blocks legitimate admin access:
-1. Change state to `enabledForReportingButNotEnforced` immediately
+1. Change the policy state to report-only in the Entra admin center immediately
 2. Add affected admin roles to role list
-3. Re-run `CA003_Creation.ps1` with updated role IDs
+3. Re-run `CA003_Creation.ps1` with updated role IDs (this takes effect only while the policy is in report-only mode; a policy that is switched on or off is skipped, so change it in the Entra admin center instead)
 4. Test before re-enforcement
 
 ---
@@ -188,7 +188,7 @@ Before enforcing this policy, verify:
 - Verify user role assignment in Entra ID admin center
 - Add missing role to policy if new admin role exists
 - Wait 5-10 minutes for policy cache refresh
-- Re-run `CA003_Creation.ps1` to force update
+- Re-run `CA003_Creation.ps1` to force update (this takes effect only while the policy is in report-only mode; a policy that is switched on or off is skipped, so change it in the Entra admin center instead)
 
 ### Issue: Non-admin user should access admin portal
 **Diagnosis**: 
@@ -238,7 +238,7 @@ Before enforcing this policy, verify:
 2. Update `$ExcludedRoles` array with new role GUIDs if roles changed
 3. Update exclusion groups as needed
 4. Test in non-production tenant first
-5. Run `.\scripts\main_script.ps1` to apply
+5. Run `.\scripts\main_script.ps1` to apply (an existing policy is updated only while it is in report-only mode; a policy that is switched on or off is skipped)
 
 ---
 

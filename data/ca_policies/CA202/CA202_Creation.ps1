@@ -36,7 +36,6 @@ $ExcludedRoles =
     "966707d0-3269-4727-9be2-8c3a10f19b9d"
     "7be44c8a-adaf-4e2a-84d6-ab2649e08a13"
     "e8611ab8-c189-46e8-94e1-60213ab1f814"
-    "f2ef992c-3afb-46b9-b7cf-a126ee74c451"
 )
 $ExcludedGroupIds = @()
 

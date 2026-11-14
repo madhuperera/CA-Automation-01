@@ -41,7 +41,7 @@ The script validates Entra ID P2 capability by:
 - **Scope**: All Users
 - **Excluded**:
   - All guest/external user types
-  - Admin roles (16 built-in admin role IDs)
+  - Admin roles (15 built-in admin role IDs)
   - Break-glass groups and policy exclusion group (`EID-SEC-U-A-CAP-CA211-Exclude`)
 
 ### Applications

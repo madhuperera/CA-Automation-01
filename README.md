@@ -194,7 +194,6 @@ CA-Automation-01/
 │   └── policy_catalogue_template.html
 │
 └── Templates/
-    ├── CAPolicy_Filled.json
     └── CAPolicy_Skeleton.ps1
 ```
 
@@ -487,7 +486,9 @@ Deploy-CAPolicy -DisplayName $DisplayName -Params $Params
 
 ## Policy catalogue
 
-A browsable version of this catalogue is in [`docs/index.html`](docs/index.html). It lists every policy with its users, target resources, conditions, and controls, and can be filtered by category, tier, control, and condition. Open the file in a browser after cloning the repository.
+A browsable version of this catalogue is published at **[sonitlo.icu/CA-Automation-01](https://sonitlo.icu/CA-Automation-01/)**. It lists every policy with its users, target resources, conditions, and controls, and can be filtered by category, tier, control, and condition.
+
+The same page is stored in the repository as [`docs/index.html`](docs/index.html) and can be opened in a browser after cloning.
 
 The page is generated from the policy scripts and must not be edited by hand. After adding or changing a policy, named location, authentication strength, or authentication context, regenerate it and commit the result:
 

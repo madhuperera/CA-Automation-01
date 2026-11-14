@@ -34,7 +34,7 @@ This policy complements CA001 by blocking access from countries outside an appro
   - `EID-SEC-U-A-CAP-CA218-Exclude` (employees traveling to excluded countries)
   - Break-glass admin groups
   - Guests/external users (by design)
-  - Privileged admin roles (16 built-in admin role IDs — same set as other Internal policies, including Global Administrator, Exchange Administrator, SharePoint Administrator, and other service-specific admin roles)
+  - Privileged admin roles (15 built-in admin role IDs — same set as other Internal policies, including Global Administrator, Exchange Administrator, SharePoint Administrator, and other service-specific admin roles)
 
 ### Applications
 - **Scope**: All Applications
@@ -123,7 +123,7 @@ This policy complements CA001 by blocking access from countries outside an appro
 
 ### Rollback Plan
 If deployment blocks legitimate business operations:
-1. Change state to `enabledForReportingButNotEnforced` immediately
+1. Change the policy state to report-only in the Entra admin center immediately
 2. Add affected countries to trusted location (if valid business need)
 3. Or add affected users to exclusion group temporarily
 4. Re-test before enforcement
@@ -200,8 +200,8 @@ Before enforcing this policy, verify:
 **Resolution**: 
 - Review audit logs to identify blocked countries
 - Add legitimate business countries to CL004.psd1
-- Update named location definition
-- Re-run `CA218_Creation.ps1` to apply changes
+- Update the named location in the Entra admin center (the deployment does not modify an existing named location)
+- Re-run `CA218_Creation.ps1` to apply changes (this takes effect only while the policy is in report-only mode; a policy that is switched on or off is skipped, so change it in the Entra admin center instead)
 
 ---
 
@@ -230,7 +230,7 @@ Before enforcing this policy, verify:
 1. Edit `data/known_locations/CL004.psd1` to adjust trusted countries
 2. Or edit `CA218_Creation.ps1` to update exclusion groups
 3. Test changes in non-production tenant first
-4. Run `.\scripts\main_script.ps1` to apply
+4. Run `.\scripts\main_script.ps1` to apply (an existing policy is updated only while it is in report-only mode; a policy that is switched on or off is skipped)
 
 ---
 

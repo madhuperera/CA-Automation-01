@@ -118,7 +118,7 @@ Device code flow is used by CLI tools, IoT devices, and applications that cannot
 
 ### Rollback Plan
 If deployment breaks critical workflows:
-1. Change state to `enabledForReportingButNotEnforced` immediately
+1. Change the policy state to report-only in the Entra admin center immediately
 2. Add affected applications/tools to exclusion group
 3. Plan migration to alternative authentication methods
 4. Re-test before enforcement
@@ -190,7 +190,7 @@ Before enforcing this policy, verify:
 
 **Resolution**: 
 - Verify break-glass groups are properly configured in policy
-- Re-run `CA004_Creation.ps1` to ensure exclusions applied
+- Re-run `CA004_Creation.ps1` to ensure exclusions applied (this takes effect only while the policy is in report-only mode; a policy that is switched on or off is skipped, so change it in the Entra admin center instead)
 - Test device code flow with excluded account
 
 ---
@@ -220,7 +220,7 @@ Before enforcing this policy, verify:
 1. Edit `CA004_Creation.ps1`
 2. Update exclusion groups as needed
 3. Test changes in non-production tenant
-4. Run `.\scripts\main_script.ps1` to apply
+4. Run `.\scripts\main_script.ps1` to apply (an existing policy is updated only while it is in report-only mode; a policy that is switched on or off is skipped)
 
 ---
 

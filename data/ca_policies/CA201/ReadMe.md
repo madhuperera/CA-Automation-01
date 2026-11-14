@@ -169,7 +169,7 @@ Before enforcing this policy, verify:
 **Resolution**: 
 - Verify policy is in `enabled` state (not reporting mode)
 - Check excluded platforms list
-- Re-run `CA201_Creation.ps1` to force update
+- Re-run `CA201_Creation.ps1` to force update (this takes effect only while the policy is in report-only mode; a policy that is switched on or off is skipped, so change it in the Entra admin center instead)
 
 ---
 
@@ -199,7 +199,7 @@ Before enforcing this policy, verify:
 2. Update `$ExcludedPlatforms` if new platform becomes supported
 3. Update exclusion groups as needed
 4. Test in non-production tenant
-5. Run `.\scripts\main_script.ps1` to apply
+5. Run `.\scripts\main_script.ps1` to apply (an existing policy is updated only while it is in report-only mode; a policy that is switched on or off is skipped)
 
 ---
 

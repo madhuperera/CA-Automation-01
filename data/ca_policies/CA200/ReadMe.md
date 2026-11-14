@@ -225,7 +225,7 @@ Before enforcing this policy, verify:
 3. Update `$IncludedPlatforms` if adding/removing mobile platforms
 4. Update exclusion groups as needed
 5. Test in non-production tenant
-6. Run `.\scripts\main_script.ps1` to apply
+6. Run `.\scripts\main_script.ps1` to apply (an existing policy is updated only while it is in report-only mode; a policy that is switched on or off is skipped)
 
 ---
 

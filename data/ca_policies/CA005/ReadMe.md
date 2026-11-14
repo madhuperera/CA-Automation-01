@@ -116,7 +116,7 @@ Device code flow is inherently higher risk because users complete authentication
 
 ### Rollback Plan
 If deployment breaks critical systems:
-1. Change state to `enabledForReportingButNotEnforced` immediately
+1. Change the policy state to report-only in the Entra admin center immediately
 2. Add affected tools to exclusion group
 3. Create formal migration plan with timeline
 4. Re-enforce after migration complete
@@ -223,7 +223,7 @@ Before enforcing this policy, verify:
 1. Edit `CA005_Creation.ps1`
 2. Update exclusion group membership as tools migrate
 3. Test changes in non-production tenant
-4. Run `.\scripts\main_script.ps1` to apply
+4. Run `.\scripts\main_script.ps1` to apply (an existing policy is updated only while it is in report-only mode; a policy that is switched on or off is skipped)
 
 ---
 

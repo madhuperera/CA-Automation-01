@@ -32,7 +32,7 @@ Passwordless methods (Windows Hello, FIDO2, Authenticator) cannot be phished or 
 - **Scope**: All Users
 - **Excluded**:
   - All guest/external user types (internalGuest, b2bCollaborationGuest, b2bCollaborationMember, b2bDirectConnectUser, otherExternalUser, serviceProvider)
-  - Privileged admin roles (16 built-in admin role IDs — same set as other Internal policies)
+  - Privileged admin roles (15 built-in admin role IDs — same set as other Internal policies)
   - Break-glass groups and policy exclusion group (`EID-SEC-U-A-CAP-CA207-Exclude`)
 
 ### Applications
