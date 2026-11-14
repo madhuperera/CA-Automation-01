@@ -249,6 +249,7 @@ This repository supports two deployment modes.
 | Internals | CA210, CA211, CA212 | Sign-in risk controls; requires Entra ID P2 |
 | Internals | CA213, CA214, CA215 | User risk controls; requires Entra ID P2 |
 | Internals | CA216, CA217 | Platform-specific device controls |
+| Internals | CA219 | Phishing-resistant MFA |
 | Guests & External | CA305 | Compliant device requirement for service provider admin access |
 
 ---
@@ -547,6 +548,7 @@ The script does not connect to Microsoft Graph and makes no changes to any tenan
 | CA216 | `CA216-O365:RequireCompliantDevice-For:Internals-When:OnWindowsDevices` | Requires compliant Windows device for Office 365 | [ReadMe](data/ca_policies/CA216/ReadMe.md) |
 | CA217 | `CA217-O365:Block-For:Internals-When:OnmacOSDevices` | Blocks Office 365 access from macOS devices | [ReadMe](data/ca_policies/CA217/ReadMe.md) |
 | CA218 | `CA218-AllApps:Block-For:Internals-When:OutsideOfTrustedCountries` | Blocks internal users from outside trusted countries | [ReadMe](data/ca_policies/CA218/ReadMe.md) |
+| CA219 | `CA219-AllApps:PhishingResistantMFA-For:Internals-When:AnyNetwork` | Requires phishing-resistant MFA for internal users | [ReadMe](data/ca_policies/CA219/ReadMe.md) |
 
 </details>
 
