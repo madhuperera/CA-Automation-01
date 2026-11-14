@@ -234,7 +234,7 @@ This repository supports two deployment modes.
 |---|---|
 | Global | CA001, CA002, CA004, CA005 |
 | Admins | CA102, CA104, CA105, CA151, CA152 |
-| Internals | CA201, CA205, CA206, CA209, CA218 |
+| Internals | CA201, CA205, CA206, CA209, CA218, CA220 |
 | Guests & External | CA300, CA301, CA302, CA303, CA304, CA306, CA307 |
 
 ### Advanced policies
@@ -550,6 +550,7 @@ The script does not connect to Microsoft Graph and makes no changes to any tenan
 | CA217 | `CA217-O365:Block-For:Internals-When:OnmacOSDevices` | Blocks Office 365 access from macOS devices | [ReadMe](data/ca_policies/CA217/ReadMe.md) |
 | CA218 | `CA218-AllApps:Block-For:Internals-When:OutsideOfTrustedCountries` | Blocks internal users from outside trusted countries | [ReadMe](data/ca_policies/CA218/ReadMe.md) |
 | CA219 | `CA219-AllApps:PhishingResistantMFA-For:Internals-When:AnyNetwork` | Requires phishing-resistant MFA for internal users | [ReadMe](data/ca_policies/CA219/ReadMe.md) |
+| CA220 | `CA220-IntuneEnrollment:RequireMFA+EverySignIn-For:Internals-When:AnyNetwork` | Requires MFA every time for Microsoft Intune enrolment | [ReadMe](data/ca_policies/CA220/ReadMe.md) |
 
 </details>
 
