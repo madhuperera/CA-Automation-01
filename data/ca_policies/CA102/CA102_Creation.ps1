@@ -1,5 +1,8 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
+# Shared deployment helpers (create / update / skip rules and run report)
+. (Join-Path $PSScriptRoot "..\..\..\scripts\deployment_helpers.ps1")
+
 $PolicyID = "CA102"
 $DisplayName = "$PolicyID-AllApps:RequireMFA-For:Admins-When:AnyNetwork"
 $State = "enabledForReportingButNotEnforced"
@@ -67,16 +70,5 @@ $params =
         }
 }
 
-$CAPolicyID = Get-MgIdentityConditionalAccessPolicy -Filter "displayName eq '$DisplayName'" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id
-
-if ($CAPolicyID)
-{
-    Write-Host "Updating existing policy with ID: $CAPolicyID"
-    Update-MgIdentityConditionalAccessPolicy -ConditionalAccessPolicyId $CAPolicyID -BodyParameter $params
-    $CAPolicyID = $null
-}
-else
-{
-    Write-Host "Creating new policy with display name: $DisplayName"
-    New-MgIdentityConditionalAccessPolicy -BodyParameter $params
-}
+# Create, update or skip the policy (see scripts/deployment_helpers.ps1 for the rules)
+Deploy-CAPolicy -DisplayName $DisplayName -Params $params

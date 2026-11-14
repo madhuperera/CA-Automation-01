@@ -185,6 +185,7 @@ CA-Automation-01/
 │   ├── create_ca_policies.ps1
 │   ├── create_groups.ps1
 │   ├── create_known_locations.ps1
+│   ├── deployment_helpers.ps1
 │   └── main_script.ps1
 │
 └── Templates/
@@ -322,6 +323,34 @@ The Core policy list is defined in:
 data/policy_tiers.psd1
 ```
 
+### Re-run behaviour
+
+The deployment is safe to run again against a tenant that has already been deployed and tuned.
+
+| Object | State in the tenant | Action |
+|---|---|---|
+| Conditional Access policy | Does not exist | Created from the repository definition |
+| Conditional Access policy | Exists in report-only mode | Updated from the repository definition |
+| Conditional Access policy | Exists and is switched on or off | Skipped. The policy is never modified |
+| Authentication strength | Exists with the same name | Skipped |
+| Authentication context | Id or name already in use | Skipped |
+| Named location | Exists with the same name | Skipped |
+| Security group | Exists with the same name | Skipped |
+
+A policy in report-only mode is replaced by the repository definition, so manual changes made to a report-only policy in the portal are overwritten.
+
+### Deployment report
+
+At the end of each run, `main_script.ps1` prints a summary of what was created, updated, skipped, or failed, with the reason for each skipped or failed item. Security groups are not included in the report.
+
+The full list is saved as a CSV file in the folder the script is run from (the current working directory), not the folder the script is stored in:
+
+```text
+CA-Deployment_{TenantId}_{yyyyMMdd-HHmmss}.csv
+```
+
+Files matching `CA-Deployment_*.csv` are excluded from Git because the file name identifies the tenant.
+
 ---
 
 ## Permissions required
@@ -348,19 +377,23 @@ The signed-in account must be able to consent to and use the following Microsoft
   </tr>
   <tr>
     <td><code>main_script.ps1</code></td>
-    <td>Entry point. Connects to Microsoft Graph, confirms tenant context, and executes sub-scripts in dependency order.</td>
+    <td>Entry point. Connects to Microsoft Graph, confirms tenant context, executes sub-scripts in dependency order, and produces the deployment report.</td>
+  </tr>
+  <tr>
+    <td><code>deployment_helpers.ps1</code></td>
+    <td>Shared functions used by the other scripts. Holds the create, update, or skip rules for Conditional Access policies and records results for the deployment report.</td>
   </tr>
   <tr>
     <td><code>create_auth_strengths.ps1</code></td>
-    <td>Discovers <code>.psd1</code> files under <code>data/auth_strengths/</code> and creates or updates custom authentication strength policies.</td>
+    <td>Discovers <code>.psd1</code> files under <code>data/auth_strengths/</code> and creates custom authentication strength policies that do not exist. Existing ones are left unchanged.</td>
   </tr>
   <tr>
     <td><code>create_auth_contexts.ps1</code></td>
-    <td>Discovers <code>.psd1</code> files under <code>data/auth_contexts/</code> and creates or updates authentication context class references.</td>
+    <td>Discovers <code>.psd1</code> files under <code>data/auth_contexts/</code> and creates authentication context class references that do not exist. Existing ones are left unchanged.</td>
   </tr>
   <tr>
     <td><code>create_known_locations.ps1</code></td>
-    <td>Discovers <code>.psd1</code> files under <code>data/known_locations/</code> and creates or updates named locations.</td>
+    <td>Discovers <code>.psd1</code> files under <code>data/known_locations/</code> and creates named locations that do not exist. Existing ones are left unchanged.</td>
   </tr>
   <tr>
     <td><code>create_break_glass_groups.ps1</code></td>
@@ -434,16 +467,10 @@ $Params = @{
     }
 }
 
-$CAPolicyID = Get-MgIdentityConditionalAccessPolicy -Filter "displayName eq '$DisplayName'" -ErrorAction SilentlyContinue
-
-if ($CAPolicyID)
-{
-    Update-MgIdentityConditionalAccessPolicy -ConditionalAccessPolicyId $CAPolicyID -BodyParameter $Params
-}
-else
-{
-    New-MgIdentityConditionalAccessPolicy -BodyParameter $Params
-}
+# Deploy-CAPolicy is defined in scripts/deployment_helpers.ps1.
+# It creates the policy if missing, updates it if it is in report-only mode,
+# and skips it if it is switched on or off.
+Deploy-CAPolicy -DisplayName $DisplayName -Params $Params
 ```
 
 ---
@@ -691,7 +718,7 @@ AAD_PREMIUM_P2
 | Wrong tenant | Disconnect from Graph and reconnect using the correct account |
 | Group not found | Confirm policy folders exist before running group creation |
 | Location ID resolution fails | Validate `.psd1` files with `Import-PowerShellDataFile` |
-| Policy does not update | Confirm the display name matches exactly |
+| Policy does not update | Confirm the display name matches exactly, and check the deployment report: policies that are switched on or off are skipped by design |
 | Risk policy fails | Confirm Entra ID P2 is available and enabled |
 | Policy impact uncertainty | Leave the policy in report-only mode and review sign-in logs |
 

@@ -1,5 +1,8 @@
 # Connect-MgGraph -Scopes 'Policy.ReadWrite.ConditionalAccess', 'Application.Read.All'
 
+# Shared deployment helpers (create / update / skip rules and run report)
+. (Join-Path $PSScriptRoot "..\..\..\scripts\deployment_helpers.ps1")
+
 # Check for Entra ID P2 license
 # Requires the LicenseAssignment.Read.All scope (requested by main_script.ps1)
 try
@@ -9,6 +12,7 @@ try
 catch
 {
     Write-Warning "Could not read tenant licences, so Entra ID P2 could not be verified. Skipping this risk-based policy. Confirm the session has the LicenseAssignment.Read.All scope. Error: $($_.Exception.Message)"
+    Add-DeploymentResult -Type "Conditional Access Policy" -Name (Split-Path $PSScriptRoot -Leaf) -Action "Failed" -Reason "Entra ID P2 could not be verified: licence lookup failed"
     exit
 }
 $enabledSkus = $skus | Where-Object {
@@ -24,6 +28,7 @@ $hasP2 = $p2ServicePlans.Count -gt 0
 if (-not $hasP2) 
 {
     Write-Warning "Tenant does NOT have Entra ID P2 license. Risk-based conditional access policies are not supported."
+    Add-DeploymentResult -Type "Conditional Access Policy" -Name (Split-Path $PSScriptRoot -Leaf) -Action "Skipped" -Reason "Tenant does not have an Entra ID P2 licence"
     exit
 }
 
@@ -133,17 +138,5 @@ $params =
         }
     }
 
-# Creating the policy
-$CAPolicyID = Get-MgIdentityConditionalAccessPolicy -Filter "displayName eq '$DisplayName'" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id
-
-if ($CAPolicyID)
-{
-    Write-Host "Updating existing policy with ID: $CAPolicyID"
-    Update-MgIdentityConditionalAccessPolicy -ConditionalAccessPolicyId $CAPolicyID -BodyParameter $params
-    $CAPolicyID = $null
-}
-else
-{
-    Write-Host "Creating new policy with display name: $DisplayName"
-    New-MgIdentityConditionalAccessPolicy -BodyParameter $params
-}
+# Create, update or skip the policy (see scripts/deployment_helpers.ps1 for the rules)
+Deploy-CAPolicy -DisplayName $DisplayName -Params $params
