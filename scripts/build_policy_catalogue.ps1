@@ -11,8 +11,8 @@
     A policy script that uses a Microsoft Graph command this script has no stand-in for is not run;
     it is listed on the page with an error instead.
 
-    Re-run this script whenever a policy, named location, authentication strength or authentication
-    context is added or changed, and commit the regenerated docs/index.html.
+    Re-run this script whenever a policy, named location, authentication strength, authentication
+    context or administrative unit is added or changed, and commit the regenerated docs/index.html.
 
 .EXAMPLE
     ./build_policy_catalogue.ps1
@@ -271,6 +271,10 @@ $contextJson = @(foreach ($file in (Get-DataFiles "data\auth_contexts"))
 {
     ConvertTo-CompactJson (ConvertTo-SortedData -Value (Import-PowerShellDataFile -Path $file.FullName))
 })
+$adminUnitJson = @(foreach ($file in (Get-DataFiles "data\admin_units"))
+{
+    ConvertTo-CompactJson (ConvertTo-SortedData -Value (Import-PowerShellDataFile -Path $file.FullName))
+})
 
 # ---- Page ----------------------------------------------------------------------------------
 
@@ -282,7 +286,8 @@ $data = @(
     '"policies":[' + $newLine + ($policyJson -join ",$newLine") + $newLine + "],"
     '"locations":[' + $newLine + ($locationJson -join ",$newLine") + $newLine + "],"
     '"strengths":[' + $newLine + ($strengthJson -join ",$newLine") + $newLine + "],"
-    '"contexts":[' + $newLine + ($contextJson -join ",$newLine") + $newLine + "]"
+    '"contexts":[' + $newLine + ($contextJson -join ",$newLine") + $newLine + "],"
+    '"adminUnits":[' + $newLine + ($adminUnitJson -join ",$newLine") + $newLine + "]"
     "}"
 ) -join $newLine
 
@@ -308,7 +313,7 @@ $outputFile = Join-Path (Resolve-Path -LiteralPath $outputDir).Path (Split-Path 
 [System.IO.File]::WriteAllText($outputFile, $page, [System.Text.UTF8Encoding]::new($false))
 
 Write-Host "Policy catalogue written to $outputFile"
-Write-Host "Policies: $($policyFolders.Count)   Named locations: $($locationJson.Count)   Authentication strengths: $($strengthJson.Count)   Authentication contexts: $($contextJson.Count)"
+Write-Host "Policies: $($policyFolders.Count)   Named locations: $($locationJson.Count)   Authentication strengths: $($strengthJson.Count)   Authentication contexts: $($contextJson.Count)   Administrative units: $($adminUnitJson.Count)"
 if ($errorCount -gt 0)
 {
     Write-Warning "$errorCount policy script(s) could not be read. They are listed on the page with the error."
