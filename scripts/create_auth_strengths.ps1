@@ -3,6 +3,12 @@
 $scriptDir    = $PSScriptRoot
 $strengthsDir = Join-Path -Path $scriptDir -ChildPath "..\data\auth_strengths"
 $graphBaseUri = "https://graph.microsoft.com/v1.0/policies/authenticationStrengthPolicies"
+$ResultType   = "Authentication Strength"
+
+# Shared deployment helpers (run report)
+. (Join-Path -Path $scriptDir -ChildPath "deployment_helpers.ps1")
+
+# Re-run rule: an authentication strength that already exists (matched by DisplayName) is never modified.
 
 $AllStrengths = Get-ChildItem -Path $strengthsDir -Recurse -File | Where-Object { $_.Name -like "*.psd1" }
 
@@ -27,16 +33,16 @@ foreach ($Strength in $AllStrengths)
     # ---- Validation ------------------------------------------------------
     if ([string]::IsNullOrWhiteSpace($params.DisplayName))
     {
-        Write-Warning "Skipping $($Strength.Name): DisplayName is required."
+        Add-DeploymentResult -Type $ResultType -Name $Strength.Name -Action "Skipped" -Reason "Invalid definition: DisplayName is required"
         continue
     }
     if (-not $params.AllowedCombinations -or $params.AllowedCombinations.Count -eq 0)
     {
-        Write-Warning "Skipping $($Strength.Name): AllowedCombinations must contain at least one value."
+        Add-DeploymentResult -Type $ResultType -Name $Strength.Name -Action "Skipped" -Reason "Invalid definition: AllowedCombinations must contain at least one value"
         continue
     }
 
-    # ---- Lookup existing by DisplayName (the upsert key) -----------------
+    # ---- Lookup existing by DisplayName (the matching key) ---------------
     $escapedName = $params.DisplayName.Replace("'", "''")
     $lookupUri   = "$graphBaseUri`?`$filter=displayName eq '$escapedName'&`$select=id,displayName"
 
@@ -46,7 +52,7 @@ foreach ($Strength in $AllStrengths)
     }
     catch
     {
-        Write-Warning "Failed lookup for '$($params.DisplayName)': $($_.Exception.Message)"
+        Add-DeploymentResult -Type $ResultType -Name $params.DisplayName -Action "Failed" -Reason "Could not check for an existing strength: $($_.Exception.Message)"
         continue
     }
 
@@ -54,23 +60,8 @@ foreach ($Strength in $AllStrengths)
 
     if ($existingId)
     {
-        # ---- Update ------------------------------------------------------
-        $body = @{
-            description         = $params.Description
-            allowedCombinations = @($params.AllowedCombinations)
-        } | ConvertTo-Json -Depth 5
-
-        $uri = "$graphBaseUri/$existingId"
-
-        try
-        {
-            Invoke-MgGraphRequest -Method PATCH -Uri $uri -Body $body -ContentType 'application/json' | Out-Null
-            Write-Output "UPD $($params.DisplayName) ($existingId)"
-        }
-        catch
-        {
-            Write-Warning "Failed update for '$($params.DisplayName)': $($_.Exception.Message)"
-        }
+        # ---- Skip: already exists, leave unchanged -----------------------
+        Add-DeploymentResult -Type $ResultType -Name $params.DisplayName -Action "Skipped" -Reason "Already exists; left unchanged"
     }
     else
     {
@@ -83,12 +74,12 @@ foreach ($Strength in $AllStrengths)
 
         try
         {
-            $created = Invoke-MgGraphRequest -Method POST -Uri $graphBaseUri -Body $body -ContentType 'application/json'
-            Write-Output "NEW $($params.DisplayName) ($($created.id))"
+            Invoke-MgGraphRequest -Method POST -Uri $graphBaseUri -Body $body -ContentType 'application/json' -ErrorAction Stop | Out-Null
+            Add-DeploymentResult -Type $ResultType -Name $params.DisplayName -Action "Created" -Reason "Did not exist"
         }
         catch
         {
-            Write-Warning "Failed create for '$($params.DisplayName)': $($_.Exception.Message)"
+            Add-DeploymentResult -Type $ResultType -Name $params.DisplayName -Action "Failed" -Reason "Create failed: $($_.Exception.Message)"
         }
     }
 }

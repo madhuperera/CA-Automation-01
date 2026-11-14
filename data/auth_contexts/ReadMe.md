@@ -88,7 +88,7 @@ The filename (e.g. `C01.psd1`) is for natural sorting / Git readability only —
 4. Update this `ReadMe.md` with the new entry.
 5. Run [`scripts/create_auth_contexts.ps1`](../../scripts/create_auth_contexts.ps1) to deploy.
 
-The deployment script uses an idempotent `PATCH` against `/identity/conditionalAccess/authenticationContextClassReferences/{id}`, so re-running it is safe — missing contexts are created, existing ones are updated in place.
+The deployment script only creates contexts that are missing, so re-running it is safe. A context is created (with a `PATCH` against `/identity/conditionalAccess/authenticationContextClassReferences/{id}`) only when both its `Id` and its `DisplayName` are unused in the tenant. An existing context is never modified, including when the `Id` is already in use under a different name; the run report shows it as skipped.
 
 ---
 

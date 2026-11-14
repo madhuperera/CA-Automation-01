@@ -69,7 +69,7 @@ Combinations may also be expressed as multi-method strings (e.g. `"password,micr
 
 The deployment script:
 - Looks up the policy by `DisplayName` (case-insensitive).
-- If found → `PATCH` updates `description` and `allowedCombinations` in place.
+- If found → the existing strength is left unchanged and reported as skipped.
 - If not found → `POST` creates a new custom policy.
 
 > **Renaming caveat:** Because `DisplayName` is the upsert key, renaming a strength in its `.psd1` will cause a *new* policy to be created. Rename in the Entra portal first (or delete the old one), then update the file.

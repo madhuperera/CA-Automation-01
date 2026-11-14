@@ -38,6 +38,9 @@ else
     Write-Output "Mode: Advanced - deploying all policies"
 }
 
+# Collects one entry per object processed (Created / Updated / Skipped / Failed).
+# The sub-scripts and policy scripts add to this list through Add-DeploymentResult in deployment_helpers.ps1.
+$DeploymentResults = [System.Collections.Generic.List[object]]::new()
 
 # IMPORTANT: Use dot-sourcing (.) not the call operator (&) for child scripts.
 # Dot-sourcing runs them in this script's scope so they can read $script:PolicyFilter.
@@ -72,3 +75,44 @@ Write-Output "Creating Conditonal Access Policies ...."
 $createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_ca_policies.ps1"
 . $createLocationsScript
 $createLocationsScript = $null
+
+# ---- Deployment report -------------------------------------------------
+Write-Host ""
+Write-Host "Deployment summary" -ForegroundColor Cyan
+
+if ($DeploymentResults.Count -eq 0)
+{
+    Write-Host "No results were recorded."
+}
+else
+{
+    $DeploymentResults |
+        Group-Object -Property Type, Action |
+        Select-Object @{ Name = "Type"; Expression = { $_.Group[0].Type } },
+                      @{ Name = "Action"; Expression = { $_.Group[0].Action } },
+                      Count |
+        Sort-Object -Property Type, Action |
+        Format-Table -AutoSize |
+        Out-Host
+
+    $NotApplied = $DeploymentResults | Where-Object { $_.Action -in "Skipped", "Failed" }
+    if ($NotApplied)
+    {
+        Write-Host "Skipped or failed:" -ForegroundColor Yellow
+        foreach ($Item in $NotApplied)
+        {
+            $ItemColour = if ($Item.Action -eq "Failed") { "Red" } else { "Yellow" }
+            Write-Host ("{0,-8} {1}: {2}" -f $Item.Action.ToUpper(), $Item.Type, $Item.Name) -ForegroundColor $ItemColour
+            Write-Host ("         {0}" -f $Item.Reason)
+        }
+        Write-Host ""
+    }
+
+    # The report is always written to the folder the script is being run from (the current
+    # working directory), not the folder the script is stored in.
+    # CA-Deployment_*.csv is excluded from Git because the file name identifies the tenant.
+    $reportDir = (Get-Location -PSProvider FileSystem).ProviderPath
+    $reportFile = Join-Path -Path $reportDir -ChildPath ("CA-Deployment_{0}_{1}.csv" -f $CurrentSession.TenantId, (Get-Date -Format "yyyyMMdd-HHmmss"))
+    $DeploymentResults | Export-Csv -LiteralPath $reportFile -NoTypeInformation -Encoding UTF8
+    Write-Host "Report saved to $reportFile"
+}
