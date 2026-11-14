@@ -332,7 +332,10 @@ footer { color: var(--muted); font-size: 12.5px; margin: 40px 0 32px; }
     "Office365": "Office 365",
     "MicrosoftAdminPortals": "Microsoft Admin Portals",
     "797f4846-ba00-4fd7-ba43-dac1f8f63013": "Windows Azure Service Management API",
-    "d4ebce55-015a-49b5-a083-c84d1797ae8c": "Microsoft Intune Enrollment"
+    "d4ebce55-015a-49b5-a083-c84d1797ae8c": "Microsoft Intune Enrollment",
+    "00000002-0000-0ff1-ce00-000000000000": "Office 365 Exchange Online",
+    "00000003-0000-0ff1-ce00-000000000000": "Office 365 SharePoint Online",
+    "cc15fd57-2c6c-4117-a88c-83b1d56b4bbe": "Microsoft Teams Services"
   };
   var USER_ACTIONS = {
     "urn:user:registerdevice": "Register or join devices",
@@ -532,7 +535,12 @@ footer { color: var(--muted); font-size: 12.5px; margin: 40px 0 32px; }
       v.controls.push({ text: "Persistent browser: " + pb.mode, cls: "session" });
       v.facets.control.push("Persistent browser");
     }
-    Object.keys(s).filter(function (k) { return k !== "signInFrequency" && k !== "persistentBrowser"; }).forEach(function (k) {
+    var tp = s.secureSignInSession;
+    if (tp && tp.isEnabled) {
+      v.controls.push({ text: "Token protection", cls: "session" });
+      v.facets.control.push("Token protection");
+    }
+    Object.keys(s).filter(function (k) { return k !== "signInFrequency" && k !== "persistentBrowser" && k !== "secureSignInSession"; }).forEach(function (k) {
       v.controls.push({ text: "Session: " + k, cls: "session" });
       v.facets.control.push("Other session control");
     });
