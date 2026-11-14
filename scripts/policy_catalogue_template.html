@@ -243,6 +243,7 @@ footer { color: var(--muted); font-size: 12.5px; margin: 40px 0 32px; }
       <a href="#locations">Named locations</a>
       <a href="#strengths">Authentication strengths</a>
       <a href="#contexts">Authentication contexts</a>
+      <a href="#admin-units">Administrative units</a>
       <a href="#roles">Admin roles</a>
     </nav>
   </header>
@@ -286,6 +287,12 @@ footer { color: var(--muted); font-size: 12.5px; margin: 40px 0 32px; }
     <h2>Authentication contexts</h2>
     <p class="section-note">Defined in <code>data/auth_contexts</code>.</p>
     <div class="table-scroll"><table class="ref"><thead><tr><th>Name</th><th>Id</th><th>Description</th><th>Used by</th></tr></thead><tbody id="ref-contexts"></tbody></table></div>
+  </section>
+
+  <section id="admin-units">
+    <h2>Administrative units</h2>
+    <p class="section-note">Defined in <code>data/admin_units</code>. The units are created empty and are not referenced by any policy; a restricted management unit protects its members from changes by administrators who do not hold a role scoped to the unit.</p>
+    <div class="table-scroll"><table class="ref"><thead><tr><th>Name</th><th>Management</th><th>Membership</th><th>Description</th></tr></thead><tbody id="ref-admin-units"></tbody></table></div>
   </section>
 
   <section id="roles">
@@ -776,6 +783,12 @@ footer { color: var(--muted); font-size: 12.5px; margin: 40px 0 32px; }
         h("td", {}, usedBy(policiesWhere(function (p) { return p.view.lists.contexts.indexOf(c.Id) !== -1; })))));
     });
 
+    var auBody = document.getElementById("ref-admin-units");
+    (DATA.adminUnits || []).forEach(function (u) {
+      auBody.appendChild(h("tr", {}, h("td", { text: u.DisplayName }), h("td", { text: u.RestrictedManagement ? "Restricted" : "Standard" }),
+        h("td", { text: u.MembershipType || "" }), h("td", { text: u.Description || "" })));
+    });
+
     var roleBody = document.getElementById("ref-roles");
     var roleIds = [];
     POLICIES.forEach(function (p) { roleIds = roleIds.concat(p.view.lists.inclRoles, p.view.lists.exclRoles); });
@@ -797,6 +810,7 @@ footer { color: var(--muted); font-size: 12.5px; margin: 40px 0 32px; }
     stat(DATA.locations.length, "named locations");
     stat(DATA.strengths.length, "custom auth strengths");
     stat(DATA.contexts.length, "auth contexts");
+    stat((DATA.adminUnits || []).length, "administrative units");
     var failed = POLICIES.filter(function (p) { return p.error; }).length;
     if (failed) { stat(failed, "could not be read"); }
   }

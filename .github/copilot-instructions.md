@@ -29,6 +29,10 @@ Each script follows a **discovery-and-apply** model:
   - Each `.psd1` contains named location definition (geographic/IP-based restriction)
   - Updates existing locations, creates new ones via `New-MgIdentityConditionalAccessNamedLocation`
 
+- **`create_admin_units.ps1`**:
+  - Scans `data/admin_units/*.psd1` files
+  - Creates each administrative unit if no unit with the same display name exists; never modifies an existing unit or its membership
+
 - **`create_break_glass_groups.ps1`**:
   - Hardcoded list of break-glass group names (`EID-SEC-U-A-ROLE-EmergencyBreakGlassAccount[1-2]`)
   - Creates security groups if missing; these are **always excluded** from all CA policies

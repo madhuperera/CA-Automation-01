@@ -3,7 +3,7 @@ param(
     [string]$Mode = "Advanced"
 )
 
-$RequireScopes = 'Policy.Read.All','Policy.ReadWrite.ConditionalAccess','Group.ReadWrite.All','Application.Read.All','AuthenticationContext.ReadWrite.All','LicenseAssignment.Read.All'
+$RequireScopes = 'Policy.Read.All','Policy.ReadWrite.ConditionalAccess','Group.ReadWrite.All','Application.Read.All','AuthenticationContext.ReadWrite.All','LicenseAssignment.Read.All','AdministrativeUnit.ReadWrite.All'
 Disconnect-MgGraph -ErrorAction SilentlyContinue
 Connect-MgGraph -Scopes $RequireScopes
 
@@ -58,6 +58,11 @@ $createLocationsScript = $null
 
 Write-Output "Creating Known Locations ...."
 $createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_known_locations.ps1"
+. $createLocationsScript
+$createLocationsScript = $null
+
+Write-Output "Creating Administrative Units ...."
+$createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_admin_units.ps1"
 . $createLocationsScript
 $createLocationsScript = $null
 

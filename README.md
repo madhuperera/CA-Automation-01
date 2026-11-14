@@ -118,6 +118,10 @@ Create named locations
 data/known_locations/*.psd1
       │
       ▼
+Create administrative units
+data/admin_units/*.psd1
+      │
+      ▼
 Create break-glass groups
 Emergency access exclusions
       │
@@ -137,8 +141,9 @@ data/ca_policies/{CA###}/*.ps1
 | Authentication strengths first | Break-glass account policies reference custom strength IDs that must exist before policies are deployed |
 | Authentication contexts second | Policies that enforce step-up authentication reference context IDs that must exist before policies are deployed |
 | Named locations third | Policies may reference country or IP-based locations |
-| Break-glass groups fourth | Emergency access exclusions must exist before policies are deployed |
-| Exclusion groups fifth | Each policy needs a dedicated exclusion group |
+| Administrative units fourth | The units are independent of the policies; they are created before the groups they are intended to protect |
+| Break-glass groups fifth | Emergency access exclusions must exist before policies are deployed |
+| Exclusion groups sixth | Each policy needs a dedicated exclusion group |
 | Policies last | Policies depend on all supporting objects being available |
 
 ---
@@ -151,6 +156,10 @@ CA-Automation-01/
 ├── README.md
 │
 ├── data/
+│   ├── admin_units/
+│   │   ├── AU001.psd1
+│   │   └── AU002.psd1
+│   │
 │   ├── ca_policies/
 │   │   ├── CA001/
 │   │   ├── CA002/
@@ -342,6 +351,7 @@ The deployment is safe to run again against a tenant that has already been deplo
 | Authentication strength | Exists with the same name | Skipped |
 | Authentication context | Id or name already in use | Skipped |
 | Named location | Exists with the same name | Skipped |
+| Administrative unit | Exists with the same name | Skipped |
 | Security group | Exists with the same name | Skipped |
 
 A policy in report-only mode is replaced by the repository definition, so manual changes made to a report-only policy in the portal are overwritten.
@@ -372,6 +382,7 @@ The signed-in account must be able to consent to and use the following Microsoft
 | Application.Read.All | Read application and service principal references |
 | AuthenticationContext.ReadWrite.All | Create and update authentication context class references |
 | LicenseAssignment.Read.All | Read subscribed licences to verify Entra ID P2 before deploying risk-based policies |
+| AdministrativeUnit.ReadWrite.All | Create administrative units. The signed-in account also needs the Privileged Role Administrator or Global Administrator role |
 
 ---
 
@@ -420,7 +431,7 @@ The signed-in account must be able to consent to and use the following Microsoft
   </tr>
   <tr>
     <td><code>create_admin_units.ps1</code></td>
-    <td>Reserved for administrative unit management if required.</td>
+    <td>Creates the administrative units defined under <code>data/admin_units/</code>. The units are created empty; the script never changes their membership.</td>
   </tr>
 </table>
 
@@ -492,7 +503,7 @@ A browsable version of this catalogue is published at **[sonitlo.icu/CA-Automati
 
 The same page is stored in the repository as [`docs/index.html`](docs/index.html) and can be opened in a browser after cloning.
 
-The page is generated from the policy scripts and must not be edited by hand. After adding or changing a policy, named location, authentication strength, or authentication context, regenerate it and commit the result:
+The page is generated from the policy scripts and must not be edited by hand. After adding or changing a policy, named location, authentication strength, authentication context, or administrative unit, regenerate it and commit the result:
 
 ```powershell
 ./scripts/build_policy_catalogue.ps1
