@@ -177,7 +177,11 @@ CA-Automation-01/
 │   │
 │   └── policy_tiers.psd1
 │
+├── docs/
+│   └── index.html
+│
 ├── scripts/
+│   ├── build_policy_catalogue.ps1
 │   ├── create_admin_units.ps1
 │   ├── create_auth_contexts.ps1
 │   ├── create_auth_strengths.ps1
@@ -186,7 +190,8 @@ CA-Automation-01/
 │   ├── create_groups.ps1
 │   ├── create_known_locations.ps1
 │   ├── deployment_helpers.ps1
-│   └── main_script.ps1
+│   ├── main_script.ps1
+│   └── policy_catalogue_template.html
 │
 └── Templates/
     ├── CAPolicy_Filled.json
@@ -384,6 +389,10 @@ The signed-in account must be able to consent to and use the following Microsoft
     <td>Shared functions used by the other scripts. Holds the create, update, or skip rules for Conditional Access policies and records results for the deployment report.</td>
   </tr>
   <tr>
+    <td><code>build_policy_catalogue.ps1</code></td>
+    <td>Documentation only. Reads every policy script without connecting to a tenant and regenerates the browsable policy catalogue at <code>docs/index.html</code>, using <code>policy_catalogue_template.html</code> for the layout.</td>
+  </tr>
+  <tr>
     <td><code>create_auth_strengths.ps1</code></td>
     <td>Discovers <code>.psd1</code> files under <code>data/auth_strengths/</code> and creates custom authentication strength policies that do not exist. Existing ones are left unchanged.</td>
   </tr>
@@ -476,6 +485,16 @@ Deploy-CAPolicy -DisplayName $DisplayName -Params $Params
 ---
 
 ## Policy catalogue
+
+A browsable version of this catalogue is in [`docs/index.html`](docs/index.html). It lists every policy with its users, target resources, conditions, and controls, and can be filtered by category, tier, control, and condition. Open the file in a browser after cloning the repository.
+
+The page is generated from the policy scripts and must not be edited by hand. After adding or changing a policy, named location, authentication strength, or authentication context, regenerate it and commit the result:
+
+```powershell
+./scripts/build_policy_catalogue.ps1
+```
+
+The script does not connect to Microsoft Graph and makes no changes to any tenant.
 
 <details>
 <summary><strong>Global — Foundational controls</strong></summary>

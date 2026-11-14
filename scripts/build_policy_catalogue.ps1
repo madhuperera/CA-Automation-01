@@ -184,8 +184,10 @@ function Get-ReadMeDetails
 function ConvertTo-CompactJson
 {
     param($Value)
-    # "<" is escaped so the data can be embedded safely inside the HTML page.
-    return ($Value | ConvertTo-Json -Depth 20 -Compress).Replace("<", "<")
+    # "<" is written as its JSON unicode escape so text from the repository files can never
+    # close the data block or start a tag when it is embedded inside the HTML page.
+    $escapedLessThan = [string][char]92 + "u003c"
+    return ($Value | ConvertTo-Json -Depth 20 -Compress).Replace("<", $escapedLessThan)
 }
 
 function Get-DataFiles
@@ -283,6 +285,11 @@ $data = @(
     '"contexts":[' + $newLine + ($contextJson -join ",$newLine") + $newLine + "]"
     "}"
 ) -join $newLine
+
+if ($data.Contains("<"))
+{
+    throw "The catalogue data still contains an unescaped '<' character; the page was not written."
+}
 
 $placeholder = "/*__CATALOGUE_DATA__*/"
 $template = [System.IO.File]::ReadAllText((Resolve-Path -LiteralPath $templatePath).Path)
