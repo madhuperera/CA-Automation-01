@@ -65,8 +65,17 @@ Managed devices (Intune-enrolled) allow longer sessions because they have additi
 
 ---
 
+## Related Policies
+
+| Policy ID | Relationship | Purpose |
+|-----------|--------------|---------|
+| CA221 | Sibling | Sets a 7-day sign-in frequency for internal users on all devices. The shorter period in CA203 takes precedence on unmanaged devices |
+
+---
+
 ## Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
+| 1.1 | 2026-11-15 | Added Related Policies section (CA221) |

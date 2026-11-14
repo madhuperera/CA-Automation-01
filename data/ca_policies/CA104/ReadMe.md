@@ -215,6 +215,7 @@ Before enforcing this policy, verify:
 |-----------|--------------|---------|
 | CA102 | Sibling | Requires MFA for admins |
 | CA103 | Sibling | Requires phishing-resistant MFA for admins |
+| CA221 | Counterpart | Sets a 7-day sign-in frequency for internal users (non-admin) |
 
 ---
 
@@ -253,3 +254,4 @@ Before enforcing this policy, verify:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial template documentation |
+| 1.1 | 2026-11-15 | Added CA221 to Related Policies |

@@ -122,3 +122,4 @@ The deployment scripts do not create the service principal themselves, because t
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-11-15 | Initial version |
+| 1.1 | 2026-11-15 | Validated in a tenant deployment (policy created in report-only mode) |

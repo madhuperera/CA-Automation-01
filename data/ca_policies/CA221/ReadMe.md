@@ -107,3 +107,4 @@ When more than one sign-in frequency policy applies to a sign-in, the shortest p
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-11-15 | Initial version |
+| 1.1 | 2026-11-15 | Validated in a tenant deployment (policy created in report-only mode) |
