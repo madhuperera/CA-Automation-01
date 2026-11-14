@@ -89,6 +89,15 @@ Passwordless methods (Windows Hello, FIDO2, Authenticator) cannot be phished or 
 
 ---
 
+## Related Policies
+
+| Policy ID | Relationship | Purpose |
+|-----------|--------------|---------|
+| CA219 | Successor | Requires phishing-resistant MFA for internal users. CA207 is expected to be retired in favour of CA219 |
+| CA206 | Sibling | Requires MFA for internal users |
+
+---
+
 ## Version History
 
 | Version | Date | Changes |
@@ -96,3 +105,4 @@ Passwordless methods (Windows Hello, FIDO2, Authenticator) cannot be phished or 
 | 1.0 | 2025-12-10 | Initial documentation |
 | 1.1 | 2026-03-27 | Fixed display name to match PS1 script |
 | 1.2 | 2026-06-18 | Added Policy Conditions and Grant Controls sections; documented authentication strength control and ID |
+| 1.3 | 2026-11-15 | Added Related Policies section (CA219) |

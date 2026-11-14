@@ -63,8 +63,19 @@ Enforce multi-factor authentication for all internal users accessing Microsoft 3
 
 ---
 
+## Related Policies
+
+| Policy ID | Relationship | Purpose |
+|-----------|--------------|---------|
+| CA219 | Sibling | Requires phishing-resistant MFA for internal users (stricter) |
+| CA220 | Sibling | Requires MFA every time for Microsoft Intune enrolment |
+| CA221 | Sibling | Sets a 7-day sign-in frequency for internal users |
+
+---
+
 ## Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial documentation |
+| 1.1 | 2026-11-15 | Added Related Policies section (CA219, CA220, CA221) |

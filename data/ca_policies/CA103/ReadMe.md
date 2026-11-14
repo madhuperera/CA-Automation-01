@@ -210,6 +210,7 @@ Before enforcing this policy, verify:
 |-----------|--------------|---------|
 | CA102 | Sibling | Requires basic MFA for admins (less strict) |
 | CA104 | Sibling | Enforces session timeout for admins |
+| CA219 | Counterpart | Requires phishing-resistant MFA for internal users (non-admin) |
 
 ---
 
@@ -248,3 +249,4 @@ Before enforcing this policy, verify:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-10 | Initial template documentation |
+| 1.1 | 2026-11-15 | Added CA219 to Related Policies |

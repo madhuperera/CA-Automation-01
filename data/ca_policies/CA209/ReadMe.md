@@ -82,6 +82,14 @@ None. This policy does not reference any named location — no location exclusio
 
 ---
 
+## Related Policies
+
+| Policy ID | Relationship | Purpose |
+|-----------|--------------|---------|
+| CA220 | Complementary | Requires MFA every time for Microsoft Intune enrolment. CA209 covers Microsoft Entra device registration and join |
+
+---
+
 ## Version History
 
 | Version | Date | Changes |
@@ -89,3 +97,4 @@ None. This policy does not reference any named location — no location exclusio
 | 1.0 | 2025-12-10 | Initial documentation |
 | 1.1 | 2026-03-27 | Corrected: policy is for device enrollment MFA outside office (not device compliance for all users) |
 | 1.2 | 2026-06-18 | Corrected: no location exclusion is configured in the creation script; policy applies from all locations |
+| 1.3 | 2026-11-15 | Added Related Policies section (CA220) |

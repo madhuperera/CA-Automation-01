@@ -74,6 +74,7 @@ Microsoft Authenticator passwordless phone sign-in and push notifications are **
 - **CA206** (MFA for internal users) and **CA207** (passwordless for internal users) target the same users and applications. When several policies apply, all of them must be satisfied, so once CA219 is enforced it is the strictest of the three and effectively supersedes CA206 and CA207.
 - **CA207** is expected to be retired in favour of this policy. Both remain in the repository for now.
 - **CA103** applies the same requirement to admin roles, which is why those roles are excluded here.
+- **CA221** sets a 7-day sign-in frequency for the same users, and **CA222** adds token protection on Windows. Together with CA219 they cover how users sign in, how long a session lasts, and where its tokens can be used.
 
 ---
 
@@ -111,3 +112,4 @@ Microsoft Authenticator passwordless phone sign-in and push notifications are **
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-11-14 | Initial version |
+| 1.1 | 2026-11-15 | Validated in a tenant deployment (policy created in report-only mode) |

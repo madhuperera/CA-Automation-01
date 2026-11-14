@@ -70,7 +70,7 @@ None. This policy only sets a session control.
 - Windows 10 or later devices that are Microsoft Entra joined, Microsoft Entra hybrid joined, or Microsoft Entra registered
 - Supported, up-to-date desktop applications (for example Outlook, Teams, OneDrive, Word, Excel, PowerPoint, OneNote)
 
-**Deployment note**: The token protection session control is sent through the Microsoft Graph v1.0 `New-MgIdentityConditionalAccessPolicy` command. If a tenant or module version does not accept the control, the deployment report shows CA222 as **Failed** with the reason, and no other policy is affected.
+**Deployment note**: The token protection session control is created through the Microsoft Graph v1.0 `New-MgIdentityConditionalAccessPolicy` command, like every other policy in this repository. This has been validated in a tenant deployment.
 
 ---
 
@@ -140,3 +140,4 @@ Handle these before enforcement, either by adding the affected accounts to `EID-
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-11-15 | Initial version |
+| 1.1 | 2026-11-15 | Validated in a tenant deployment (policy created in report-only mode) |
