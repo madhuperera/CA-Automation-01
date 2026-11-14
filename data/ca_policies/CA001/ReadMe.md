@@ -185,9 +185,9 @@ Before enforcing this policy, verify:
 - Ensure user is not in any exclusion group
 
 **Resolution**: 
-- Run `create_known_locations.ps1` to ensure location exists with correct configuration
+- Run `create_known_locations.ps1` to create the location if it is missing (an existing location with the same name is not modified, so correct it in the Entra admin center)
 - Run `create_groups.ps1` to ensure groups exist
-- Run `CA001_Creation.ps1` to ensure policy is updated
+- Run `CA001_Creation.ps1` to create the policy, or to update it while it is in report-only mode (a policy that is switched on or off is skipped)
 - Verify `data/known_locations/CL001.psd1` contains correct country code (BV) and unknown location flag
 
 ### Issue: Legitimate users blocked from known locations
@@ -209,7 +209,7 @@ Before enforcing this policy, verify:
 
 **Resolution**: 
 - Run `create_break_glass_groups.ps1` to create groups
-- Re-run `CA001_Creation.ps1` to apply exclusions
+- Re-run `CA001_Creation.ps1` to apply exclusions (this takes effect only while the policy is in report-only mode; a policy that is switched on or off is skipped, so change it in the Entra admin center instead)
 - Verify group IDs in policy definition match created groups
 
 ---
@@ -239,7 +239,7 @@ Before enforcing this policy, verify:
 ### How to Modify
 1. Edit `CA001_Creation.ps1`
 2. Test changes in a non-production tenant first
-3. Run `.\scripts\main_script.ps1` to apply changes
+3. Run `.\scripts\main_script.ps1` to apply changes (an existing policy is updated only while it is in report-only mode; a policy that is switched on or off is skipped)
 4. Monitor audit logs for impact
 
 ---

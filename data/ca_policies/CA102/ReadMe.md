@@ -127,7 +127,7 @@ This policy applies to all administrative roles (15+ roles including Global Admi
 
 ### Rollback Plan
 If MFA system fails and admins locked out:
-1. Change state to `enabledForReportingButNotEnforced` immediately
+1. Change the policy state to report-only in the Entra admin center immediately
 2. Use break-glass accounts for emergency access
 3. Troubleshoot MFA system
 4. Re-enforce once fixed
@@ -171,7 +171,7 @@ Before enforcing this policy, verify:
 - Verify admin has registered MFA device
 - Check MFA method is functional (authenticator app updated, phone available)
 - If admin locked out: Use break-glass account to investigate
-- Re-run `CA102_Creation.ps1` to ensure policy updated
+- Re-run `CA102_Creation.ps1` to ensure policy updated (this takes effect only while the policy is in report-only mode; a policy that is switched on or off is skipped, so change it in the Entra admin center instead)
 
 ### Issue: Non-admin receiving MFA prompt
 **Diagnosis**: 
@@ -224,7 +224,7 @@ Before enforcing this policy, verify:
 1. Edit `CA102_Creation.ps1`
 2. Update `$IncludedRoles` array if roles changed
 3. Test in non-production tenant
-4. Run `.\scripts\main_script.ps1` to apply
+4. Run `.\scripts\main_script.ps1` to apply (an existing policy is updated only while it is in report-only mode; a policy that is switched on or off is skipped)
 
 ---
 

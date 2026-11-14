@@ -124,7 +124,7 @@ This policy targets the Azure Management application specifically, ensuring that
 
 ### Rollback Plan
 If deployment causes widespread access disruption:
-1. Change state to `enabledForReportingButNotEnforced` immediately
+1. Change the policy state to report-only in the Entra admin center immediately
 2. Add affected users to exclusion group temporarily
 3. Adjust MFA method support (enable phone sign-in if needed)
 4. Re-test before enforcement
@@ -196,7 +196,7 @@ Before enforcing this policy, verify:
 
 **Resolution**: 
 - Verify break-glass MFA devices are registered and functional
-- Re-run `CA002_Creation.ps1` to ensure policy exclusions applied
+- Re-run `CA002_Creation.ps1` to ensure policy exclusions applied (this takes effect only while the policy is in report-only mode; a policy that is switched on or off is skipped, so change it in the Entra admin center instead)
 - Test break-glass account can access Azure portal
 
 ---
@@ -226,7 +226,7 @@ Before enforcing this policy, verify:
 1. Edit `CA002_Creation.ps1`
 2. Update exclusion groups as needed
 3. Test in non-production tenant first
-4. Run `.\scripts\main_script.ps1` to apply changes
+4. Run `.\scripts\main_script.ps1` to apply changes (an existing policy is updated only while it is in report-only mode; a policy that is switched on or off is skipped)
 
 ---
 

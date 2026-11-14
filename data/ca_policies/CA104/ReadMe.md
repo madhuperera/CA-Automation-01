@@ -124,7 +124,7 @@ A session token stolen at the start of the day could be used all day without thi
 
 ### Rollback Plan
 If session timeout causes widespread productivity issues:
-1. Change state to `enabledForReportingButNotEnforced` immediately
+1. Change the policy state to report-only in the Entra admin center immediately
 2. Increase timeout from 4 hours to 8 hours (or appropriate value)
 3. Add exclusion group members for admins with legitimate long sessions
 4. Re-enforce with adjusted timeout
@@ -194,7 +194,7 @@ Before enforcing this policy, verify:
 **Resolution**: 
 - Verify policy state is `enabled` (not `enabledForReportingButNotEnforced`)
 - Check policy `sessionControls` section is correctly formatted
-- Re-run `CA104_Creation.ps1` to force update
+- Re-run `CA104_Creation.ps1` to force update (this takes effect only while the policy is in report-only mode; a policy that is switched on or off is skipped, so change it in the Entra admin center instead)
 - Verify policy exists in Entra ID > Conditional Access > Policies
 
 ### Issue: Break-glass account also experiencing session timeout
@@ -204,7 +204,7 @@ Before enforcing this policy, verify:
 
 **Resolution**: 
 - Verify break-glass groups are in exclusion list
-- Re-run `CA104_Creation.ps1` to apply exclusions
+- Re-run `CA104_Creation.ps1` to apply exclusions (this takes effect only while the policy is in report-only mode; a policy that is switched on or off is skipped, so change it in the Entra admin center instead)
 - For critical long sessions: Re-authenticate at 4-hour mark as needed
 
 ---
@@ -236,7 +236,7 @@ Before enforcing this policy, verify:
 2. Update `$TimeValue` to desired timeout (hours or days)
 3. Update `$IncludedRoles` if roles changed
 4. Test in non-production tenant
-5. Run `.\scripts\main_script.ps1` to apply
+5. Run `.\scripts\main_script.ps1` to apply (an existing policy is updated only while it is in report-only mode; a policy that is switched on or off is skipped)
 
 ---
 

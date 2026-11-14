@@ -65,7 +65,7 @@ This policy applies to the second break-glass account. Unlike CA151 (which uses 
 - SMS codes
 - Phone approvals
 
-> **Deployment note**: If `AS02-EBG-02` cannot be resolved at deployment time, the script falls back to the built-in Phishing-resistant MFA strength, which accepts FIDO2, Windows Hello for Business, and certificate-based authentication.
+> **Deployment note**: If `AS02-EBG-02` cannot be resolved at deployment time, the script falls back to the built-in Multifactor authentication strength (`00000000-0000-0000-0000-000000000002`). Password plus a software OATH token satisfies it, so break-glass account 2 can still sign in, but the built-in strength also accepts other MFA methods. Check the run output for the fallback warning and switch the policy to `AS02-EBG-02` once that strength exists.
 
 ---
 

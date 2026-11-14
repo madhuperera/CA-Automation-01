@@ -84,7 +84,7 @@ To enable enforcement:
 The policy is defined in `CA105_Creation.ps1` and includes:
 - Automatic group ID lookup from Entra ID
 - Policy creation if it doesn't exist
-- Policy update if it already exists
+- Policy update if it already exists in report-only mode (a policy that is switched on or off is skipped)
 
 ### Prerequisites
 - Microsoft Graph PowerShell SDK

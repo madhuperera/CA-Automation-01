@@ -47,7 +47,7 @@ $IncludedApplications = "All"
 $Operator = "OR"
 $AuthStrengthDefinition = Import-PowerShellDataFile -Path (Join-Path $PSScriptRoot "..\..\auth_strengths\AS02.psd1")
 $AuthStrengthName = $AuthStrengthDefinition.DisplayName
-$FallbackAuthStrengthId = "00000000-0000-0000-0000-000000000004"  # Built-in: Phishing-resistant MFA
+$FallbackAuthStrengthId = "00000000-0000-0000-0000-000000000002"  # Built-in: Multifactor authentication (satisfied by password + software OATH)
 
 $AuthStrengthId    = $null
 $RetryTimeoutSecs  = 120
@@ -69,7 +69,7 @@ $Stopwatch.Stop()
 
 if (-not $AuthStrengthId)
 {
-    Write-Warning "Authentication Strength '$AuthStrengthName' not found after $RetryTimeoutSecs seconds. Falling back to built-in Phishing-resistant MFA ($FallbackAuthStrengthId)."
+    Write-Warning "Authentication Strength '$AuthStrengthName' not found after $RetryTimeoutSecs seconds. Falling back to built-in Multifactor authentication ($FallbackAuthStrengthId)."
     $AuthStrengthId = $FallbackAuthStrengthId
 }
 
