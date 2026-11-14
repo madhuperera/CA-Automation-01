@@ -249,6 +249,7 @@ This repository supports two deployment modes.
 | Internals | CA213, CA214, CA215 | User risk controls; requires Entra ID P2 |
 | Internals | CA216, CA217 | Platform-specific device controls |
 | Internals | CA219 | Phishing-resistant MFA |
+| Internals | CA221 | Sign-in frequency of 7 days |
 | Guests & External | CA305 | Compliant device requirement for service provider admin access |
 
 ---
@@ -551,6 +552,7 @@ The script does not connect to Microsoft Graph and makes no changes to any tenan
 | CA218 | `CA218-AllApps:Block-For:Internals-When:OutsideOfTrustedCountries` | Blocks internal users from outside trusted countries | [ReadMe](data/ca_policies/CA218/ReadMe.md) |
 | CA219 | `CA219-AllApps:PhishingResistantMFA-For:Internals-When:AnyNetwork` | Requires phishing-resistant MFA for internal users | [ReadMe](data/ca_policies/CA219/ReadMe.md) |
 | CA220 | `CA220-IntuneEnrollment:RequireMFA+EverySignIn-For:Internals-When:AnyNetwork` | Requires MFA every time for Microsoft Intune enrolment | [ReadMe](data/ca_policies/CA220/ReadMe.md) |
+| CA221 | `CA221-AllApps:SessionFrequency7Days-For:Internals-When:AnyNetwork` | Requires internal users to reauthenticate every 7 days | [ReadMe](data/ca_policies/CA221/ReadMe.md) |
 
 </details>
 
