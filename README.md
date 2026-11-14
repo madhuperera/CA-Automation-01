@@ -234,7 +234,7 @@ This repository supports two deployment modes.
 |---|---|
 | Global | CA001, CA002, CA004, CA005 |
 | Admins | CA102, CA104, CA105, CA151, CA152 |
-| Internals | CA201, CA205, CA206, CA209, CA218 |
+| Internals | CA201, CA205, CA206, CA209, CA218, CA220 |
 | Guests & External | CA300, CA301, CA302, CA303, CA304, CA306, CA307 |
 
 ### Advanced policies
@@ -249,6 +249,8 @@ This repository supports two deployment modes.
 | Internals | CA213, CA214, CA215 | User risk controls; requires Entra ID P2 |
 | Internals | CA216, CA217 | Platform-specific device controls |
 | Internals | CA219 | Phishing-resistant MFA |
+| Internals | CA221 | Sign-in frequency of 7 days |
+| Internals | CA222 | Token protection on Windows devices |
 | Guests & External | CA305 | Compliant device requirement for service provider admin access |
 
 ---
@@ -550,6 +552,9 @@ The script does not connect to Microsoft Graph and makes no changes to any tenan
 | CA217 | `CA217-O365:Block-For:Internals-When:OnmacOSDevices` | Blocks Office 365 access from macOS devices | [ReadMe](data/ca_policies/CA217/ReadMe.md) |
 | CA218 | `CA218-AllApps:Block-For:Internals-When:OutsideOfTrustedCountries` | Blocks internal users from outside trusted countries | [ReadMe](data/ca_policies/CA218/ReadMe.md) |
 | CA219 | `CA219-AllApps:PhishingResistantMFA-For:Internals-When:AnyNetwork` | Requires phishing-resistant MFA for internal users | [ReadMe](data/ca_policies/CA219/ReadMe.md) |
+| CA220 | `CA220-IntuneEnrollment:RequireMFA+EverySignIn-For:Internals-When:AnyNetwork` | Requires MFA every time for Microsoft Intune enrolment | [ReadMe](data/ca_policies/CA220/ReadMe.md) |
+| CA221 | `CA221-AllApps:SessionFrequency7Days-For:Internals-When:AnyNetwork` | Requires internal users to reauthenticate every 7 days | [ReadMe](data/ca_policies/CA221/ReadMe.md) |
+| CA222 | `CA222-EXO+SPO+Teams:RequireTokenProtection-For:Internals-When:OnWindowsDevices` | Requires token protection for Exchange Online, SharePoint Online and Teams on Windows | [ReadMe](data/ca_policies/CA222/ReadMe.md) |
 
 </details>
 
