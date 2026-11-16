@@ -39,9 +39,9 @@ The filename (e.g. `C01.psd1`) is for natural sorting / Git readability only —
 
 A context only labels an action. What it enforces is set by the Conditional Access policy that targets the context.
 
-### Display name length
+### Display name and description length
 
-Keep display names short. Microsoft Entra rejected a 72-character display name for `c4` without giving a reason; the existing names of up to 41 characters are accepted. `PRMFA` in `AC04` stands for phishing-resistant MFA.
+Keep display names and descriptions short. Microsoft Entra rejects a context whose text is too long with a plain `BadRequest` and no reason, and the limits are not documented. Display names of up to 32 characters and descriptions of up to 121 characters are known to be accepted. `PRMFA` in `AC04` stands for phishing-resistant MFA.
 
 ---
 
