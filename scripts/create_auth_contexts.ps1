@@ -62,6 +62,14 @@ foreach ($Context in $AllContexts)
         continue
     }
 
+    # Microsoft Entra rejects a description longer than 150 characters with a plain BadRequest.
+    $MaxDescriptionLength = 150
+    if ("$($params.Description)".Length -gt $MaxDescriptionLength)
+    {
+        Add-DeploymentResult -Type $ResultType -Name "$($params.Id) - $($params.DisplayName)" -Action "Skipped" -Reason "Invalid definition: Description is $("$($params.Description)".Length) characters; the maximum is $MaxDescriptionLength"
+        continue
+    }
+
     $ResultName = "$($params.Id) - $($params.DisplayName)"
 
     # ---- Skip if the Id or the DisplayName is already in use -------------

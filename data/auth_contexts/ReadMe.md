@@ -21,7 +21,7 @@ Each context is defined as a `.psd1` file in this folder and deployed by [`scrip
 | ------------- | -------------- | -------------------------------------------------------------- |
 | `Id`          | `id`           | Allowed values `c1`–`c25`. Issued in the `acrs` access token claim. |
 | `DisplayName` | `displayName`  | Friendly name used in admin selection UX.                      |
-| `Description` | `description`  | Short explanation of what the context enforces.                |
+| `Description` | `description`  | Short explanation of what the context enforces. Maximum 150 characters. |
 | `IsAvailable` | `isAvailable`  | `$true` publishes for app/CA use; `$false` keeps it draft-only.|
 
 The filename (e.g. `C01.psd1`) is for natural sorting / Git readability only — Microsoft Graph keys on the lowercase `Id` value inside the file.
@@ -39,9 +39,9 @@ The filename (e.g. `C01.psd1`) is for natural sorting / Git readability only —
 
 A context only labels an action. What it enforces is set by the Conditional Access policy that targets the context.
 
-### Display name and description length
+### Description length
 
-Keep display names and descriptions short. Microsoft Entra rejects a context whose text is too long with a plain `BadRequest` and no reason, and the limits are not documented. Display names of up to 32 characters and descriptions of up to 121 characters are known to be accepted. `PRMFA` in `AC04` stands for phishing-resistant MFA.
+A description can be at most 150 characters. Microsoft Entra rejects a longer one with a plain `BadRequest` and no reason, and the limit is not documented. The deployment script checks the length first and reports a longer description as skipped. `PRMFA` in `AC04` stands for phishing-resistant MFA.
 
 ---
 
