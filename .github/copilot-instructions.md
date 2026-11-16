@@ -29,6 +29,10 @@ Each script follows a **discovery-and-apply** model:
   - Each `.psd1` contains named location definition (geographic/IP-based restriction)
   - Updates existing locations, creates new ones via `New-MgIdentityConditionalAccessNamedLocation`
 
+- **`create_service_principals.ps1`**:
+  - Scans `data/service_principals/*.psd1` files (Microsoft applications that a policy targets)
+  - Runs first. If a service principal is missing it pauses with a prompt; it creates one only after a `Y` answer (requesting `Application.ReadWrite.All` at that point), otherwise `Deploy-CAPolicy` skips the policies that need it
+
 - **`create_admin_units.ps1`**:
   - Scans `data/admin_units/*.psd1` files
   - Creates each administrative unit if no unit with the same display name exists; never modifies an existing unit or its membership

@@ -21,7 +21,7 @@ Each context is defined as a `.psd1` file in this folder and deployed by [`scrip
 | ------------- | -------------- | -------------------------------------------------------------- |
 | `Id`          | `id`           | Allowed values `c1`–`c25`. Issued in the `acrs` access token claim. |
 | `DisplayName` | `displayName`  | Friendly name used in admin selection UX.                      |
-| `Description` | `description`  | Short explanation of what the context enforces.                |
+| `Description` | `description`  | Short explanation of what the context enforces. Maximum 150 characters. |
 | `IsAvailable` | `isAvailable`  | `$true` publishes for app/CA use; `$false` keeps it draft-only.|
 
 The filename (e.g. `C01.psd1`) is for natural sorting / Git readability only — Microsoft Graph keys on the lowercase `Id` value inside the file.
@@ -30,53 +30,18 @@ The filename (e.g. `C01.psd1`) is for natural sorting / Git readability only —
 
 ## Catalogue
 
-### C01 - Require Compliant Device
+| File | Id | Display name | Enforces |
+| ---- | -- | ------------ | -------- |
+| [C01.psd1](C01.psd1) | `c1` | `AC01-Require-Compliant-Device` | Action requires a compliant device |
+| [C02.psd1](C02.psd1) | `c2` | `AC02-Require-Phish-Resistant-MFA` | Action requires phishing-resistant MFA (FIDO2, Windows Hello for Business, or certificate-based) |
+| [C03.psd1](C03.psd1) | `c3` | `AC03-Require-Trusted-Location` | Action requires the user to be on a trusted internal network location |
+| [C04.psd1](C04.psd1) | `c4` | `AC04-Require-PRMFA-Or-Compliant-Or-Trusted` | Action requires phishing-resistant MFA, or a compliant device, or a trusted internal network location |
 
-| Attribute    | Value                                                                                  |
-| ------------ | -------------------------------------------------------------------------------------- |
-| **Id**       | `c1`                                                                                   |
-| **Display**  | AC01-Require-Compliant-Device                                                          |
-| **Enforces** | Action requires a compliant or hybrid Entra-joined device.                             |
+A context only labels an action. What it enforces is set by the Conditional Access policy that targets the context.
 
----
+### Description length
 
-### C02 - Require Phish-Resistant MFA
-
-| Attribute    | Value                                                                                  |
-| ------------ | -------------------------------------------------------------------------------------- |
-| **Id**       | `c2`                                                                                   |
-| **Display**  | AC02-Require-Phish-Resistant-MFA                                                       |
-| **Enforces** | Action requires phishing-resistant MFA (FIDO2, WHfB, or certificate-based).            |
-
----
-
-### C03 - Require MFA Re-authentication
-
-| Attribute    | Value                                                                                  |
-| ------------ | -------------------------------------------------------------------------------------- |
-| **Id**       | `c3`                                                                                   |
-| **Display**  | AC03-Require-MFA-Reauthentication                                                      |
-| **Enforces** | Fresh MFA challenge regardless of session age.                                         |
-
----
-
-### C04 - Require Trusted Location
-
-| Attribute    | Value                                                                                  |
-| ------------ | -------------------------------------------------------------------------------------- |
-| **Id**       | `c4`                                                                                   |
-| **Display**  | AC04-Require-Trusted-Location                                                          |
-| **Enforces** | User must be on a trusted internal network location.                                   |
-
----
-
-### C05 - High-Risk Admin Action
-
-| Attribute    | Value                                                                                  |
-| ------------ | -------------------------------------------------------------------------------------- |
-| **Id**       | `c5`                                                                                   |
-| **Display**  | AC05-High-Risk-Admin-Action                                                            |
-| **Enforces** | Compliant device **AND** phishing-resistant MFA. Intended for sensitive admin ops.     |
+A description can be at most 150 characters. Microsoft Entra rejects a longer one with a plain `BadRequest` and no reason, and the limit is not documented. The deployment script checks the length first and reports a longer description as skipped. `PRMFA` in `AC04` stands for phishing-resistant MFA.
 
 ---
 

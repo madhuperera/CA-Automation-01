@@ -62,6 +62,21 @@ function Deploy-CAPolicy
     $Type            = "Conditional Access Policy"
     $ReportOnlyState = "enabledForReportingButNotEnforced"
 
+    # ---- Skip policies that target an application missing from the tenant ----
+    # $UnavailableApplications is filled by create_service_principals.ps1 (AppId -> reason).
+    # Microsoft Graph would reject the policy, so it is reported as skipped with a clear reason instead.
+    if ($UnavailableApplications -is [hashtable] -and $UnavailableApplications.Count -gt 0)
+    {
+        $TargetedApps = @($Params.conditions.applications.includeApplications) + @($Params.conditions.applications.excludeApplications)
+        $MissingAppId = $TargetedApps | Where-Object { $_ -and $UnavailableApplications.ContainsKey("$_") } | Select-Object -First 1
+
+        if ($MissingAppId)
+        {
+            Add-DeploymentResult -Type $Type -Name $DisplayName -Action "Skipped" -Reason $UnavailableApplications["$MissingAppId"]
+            return
+        }
+    }
+
     # ---- Look for an existing policy with the same display name ----------
     # A failed lookup must never be treated as "policy does not exist",
     # otherwise a duplicate policy would be created.
