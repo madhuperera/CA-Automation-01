@@ -46,6 +46,16 @@ $DeploymentResults = [System.Collections.Generic.List[object]]::new()
 # Dot-sourcing runs them in this script's scope so they can read $script:PolicyFilter.
 # Using & would create a new scope where $script:PolicyFilter is $null, ignoring the Core/Advanced filter.
 
+# Applications that a policy targets but that have no service principal in this tenant (AppId -> reason).
+# Filled by create_service_principals.ps1 and read by Deploy-CAPolicy, which skips the affected policies.
+$UnavailableApplications = @{}
+
+# This step runs first because it can pause the deployment to ask a question.
+Write-Output "Checking Required Service Principals ...."
+$createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_service_principals.ps1"
+. $createLocationsScript
+$createLocationsScript = $null
+
 Write-Output "Creating Authentication Strengths ...."
 $createLocationsScript = Join-Path -Path $scriptDir -ChildPath "create_auth_strengths.ps1"
 . $createLocationsScript

@@ -106,6 +106,11 @@ main_script.ps1
 Connect to Microsoft Graph
       │
       ▼
+Check required service principals
+data/service_principals/*.psd1
+(pauses and asks before creating one)
+      │
+      ▼
 Create authentication strengths
 data/auth_strengths/*.psd1
       │
@@ -138,6 +143,7 @@ data/ca_policies/{CA###}/*.ps1
 
 | Step | Reason |
 |---|---|
+| Service principal check before everything | It is the only step that can pause to ask a question, so it runs while the operator is still at the keyboard. Policies that target a missing application are skipped rather than failed |
 | Authentication strengths first | Break-glass account policies reference custom strength IDs that must exist before policies are deployed |
 | Authentication contexts second | Policies that enforce step-up authentication reference context IDs that must exist before policies are deployed |
 | Named locations third | Policies may reference country or IP-based locations |
@@ -184,6 +190,9 @@ CA-Automation-01/
 │   │   ├── CL004.psd1
 │   │   └── CL005.psd1
 │   │
+│   ├── service_principals/
+│   │   └── SP001.psd1
+│   │
 │   └── policy_tiers.psd1
 │
 ├── docs/
@@ -198,6 +207,7 @@ CA-Automation-01/
 │   ├── create_ca_policies.ps1
 │   ├── create_groups.ps1
 │   ├── create_known_locations.ps1
+│   ├── create_service_principals.ps1
 │   ├── deployment_helpers.ps1
 │   ├── main_script.ps1
 │   └── policy_catalogue_template.html
@@ -353,6 +363,8 @@ The deployment is safe to run again against a tenant that has already been deplo
 | Named location | Exists with the same name | Skipped |
 | Administrative unit | Exists with the same name | Skipped |
 | Security group | Exists with the same name | Skipped |
+| Service principal | Exists | Skipped |
+| Service principal | Does not exist | The deployment pauses and asks. Created only after a `Y` answer; otherwise it and the policies that need it are skipped |
 
 A policy in report-only mode is replaced by the repository definition, so manual changes made to a report-only policy in the portal are overwritten.
 
@@ -384,6 +396,12 @@ The signed-in account must be able to consent to and use the following Microsoft
 | LicenseAssignment.Read.All | Read subscribed licences to verify Entra ID P2 before deploying risk-based policies |
 | AdministrativeUnit.ReadWrite.All | Create administrative units. The signed-in account also needs the Privileged Role Administrator or Global Administrator role |
 
+One further permission is requested only on demand:
+
+| Permission | When it is requested |
+|---|---|
+| Application.ReadWrite.All | Only when a required service principal (for example Microsoft Intune Enrollment, used by CA220) is missing and you answer `Y` to the prompt to create it. This triggers a second sign-in. The account also needs the Application Administrator, Cloud Application Administrator or Global Administrator role |
+
 ---
 
 ## Script responsibilities
@@ -404,6 +422,10 @@ The signed-in account must be able to consent to and use the following Microsoft
   <tr>
     <td><code>build_policy_catalogue.ps1</code></td>
     <td>Documentation only. Reads every policy script without connecting to a tenant and regenerates the browsable policy catalogue at <code>docs/index.html</code>, using <code>policy_catalogue_template.html</code> for the layout.</td>
+  </tr>
+  <tr>
+    <td><code>create_service_principals.ps1</code></td>
+    <td>Checks that the Microsoft applications listed under <code>data/service_principals/</code> have a service principal in the tenant. If one is missing, the deployment pauses and asks whether to create it. Existing ones are left unchanged.</td>
   </tr>
   <tr>
     <td><code>create_auth_strengths.ps1</code></td>

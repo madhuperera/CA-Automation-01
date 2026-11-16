@@ -67,16 +67,21 @@ Microsoft Intune device enrolment is one of the scenarios where the "every time"
 
 ## Prerequisite: Microsoft Intune Enrollment Application
 
-The policy targets the Microsoft Intune Enrollment application. In some tenants this application has no service principal, and Microsoft Graph then rejects the policy. The deployment report shows CA220 as **Failed** with the reason, and no other policy is affected.
+The policy targets the Microsoft Intune Enrollment application. In some tenants this application has no service principal, and Microsoft Graph then rejects the policy (`ServicePrincipalNotFound`).
 
-To fix it, create the service principal once and run the deployment again:
+The deployment checks for the service principal before anything else is created. If it is missing, the deployment pauses and shows a red banner asking whether to create it:
+
+- **Y**: you are asked to sign in a second time to grant `Application.ReadWrite.All`, and the service principal is created. The account needs the Application Administrator, Cloud Application Administrator or Global Administrator role.
+- **N**: nothing is created and the deployment report shows CA220 as **Skipped**. No other policy is affected.
+
+The extra permission is only requested after a `Y` answer. See [`data/service_principals/ReadMe.md`](../../service_principals/ReadMe.md) for details.
+
+To create the service principal by hand instead, and then run the deployment again:
 
 ```powershell
 Connect-MgGraph -Scopes "Application.ReadWrite.All"
 New-MgServicePrincipal -AppId "d4ebce55-015a-49b5-a083-c84d1797ae8c"
 ```
-
-The deployment scripts do not create the service principal themselves, because that needs a permission the deployment does not otherwise request.
 
 ---
 
@@ -99,7 +104,7 @@ The deployment scripts do not create the service principal themselves, because t
 
 ## Testing Checklist
 
-- [ ] Microsoft Intune Enrollment service principal exists in the tenant
+- [ ] Microsoft Intune Enrollment service principal exists in the tenant (the deployment offers to create it)
 - [ ] Policy deployed in report-only mode
 - [ ] Sign-in logs reviewed for sign-ins to Microsoft Intune Enrollment
 - [ ] Enrolment on each platform in use (Windows, iOS/iPadOS, Android, macOS) prompts for MFA
@@ -123,3 +128,4 @@ The deployment scripts do not create the service principal themselves, because t
 |---------|------|---------|
 | 1.0 | 2026-11-15 | Initial version |
 | 1.1 | 2026-11-15 | Validated in a tenant deployment (policy created in report-only mode) |
+| 1.2 | 2026-11-17 | The deployment now checks for the Microsoft Intune Enrollment service principal and offers to create it |
