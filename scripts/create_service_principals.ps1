@@ -139,12 +139,15 @@ foreach ($Principal in $AllPrincipals)
 
     # ---- Sign in again with the extra permission -------------------------
     $TenantBefore = (Get-MgContext -ErrorAction SilentlyContinue).TenantId
-    $BaseScopes   = if ($RequireScopes) { @($RequireScopes) } else { @("Application.Read.All") }
+    # Built as an array on purpose: adding two plain strings would join them into one invalid scope name.
+    # $RequireScopes is set by main_script.ps1; it does not exist when this script is run on its own.
+    [string[]]$ConnectScopes = @($RequireScopes) + @("Application.Read.All", $CreateScope) | Where-Object { $_ } | Select-Object -Unique
     $ConnectError = $null
 
     try
     {
-        Connect-MgGraph -Scopes ($BaseScopes + $CreateScope) -ErrorAction Stop
+        # -TenantId keeps the second sign-in in the tenant the deployment started in.
+        Connect-MgGraph -TenantId $TenantBefore -Scopes $ConnectScopes -ErrorAction Stop
     }
     catch
     {
@@ -156,6 +159,10 @@ foreach ($Principal in $AllPrincipals)
     if (-not $TenantAfter -or $TenantAfter -ne $TenantBefore)
     {
         Disconnect-MgGraph -ErrorAction SilentlyContinue | Out-Null
+        if ($ConnectError)
+        {
+            throw "Deployment stopped: the second sign-in failed and the session to tenant $TenantBefore was lost. No further changes were made. Run the deployment again. Sign-in error: $ConnectError"
+        }
         throw "Deployment stopped: after the second sign-in the session is no longer connected to the original tenant ($TenantBefore). No further changes were made. Run the deployment again."
     }
 
